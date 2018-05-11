@@ -33,20 +33,18 @@
 //
 
 #include "DataFormats/CTPPSDigi/interface/CTPPSPixelDigi.h" 
+#include "DataFormats/CTPPSDigi/interface/CTPPSPixelDataError.h" 
 #include "CondFormats/CTPPSReadoutObjects/interface/CTPPSPixelDAQMapping.h" 
 #include "DataFormats/Common/interface/DetSetVector.h"
 
 #include "EventFilter/CTPPSRawToDigi/interface/RPixErrorChecker.h"
-#include "CondFormats/CTPPSReadoutObjects/interface/CTPPSPixelIndices.h"
-#include "CondFormats/CTPPSReadoutObjects/interface/CTPPSElectronicIndex.h"
-#include "FWCore/Utilities/interface/typedefs.h"
 
 #include <cstdint>
 #include <vector>
 #include <map>
 
 class FEDRawData;
-//class CTPPSPixelDAQMapping;
+class RPixErrorChecker;
 
 class CTPPSPixelDataFormatter {
 
@@ -56,41 +54,40 @@ public:
 
   typedef std::map<int, FEDRawData> RawData;
   typedef std::vector<CTPPSPixelDigi> DetDigis;
-  typedef std::map<cms_uint32_t,DetDigis> Digis;
+
+  typedef std::vector<CTPPSPixelDataError> DetErrors;
+  typedef std::map<uint32_t, DetErrors> Errors;
 
   typedef uint32_t Word32;
   typedef uint64_t Word64;
 
   CTPPSPixelDataFormatter(std::map<CTPPSPixelFramePosition, CTPPSPixelROCInfo> const &mapping);
 
-  int nWords() const { return theWordCounter; }
-  int nDigis() const { return theDigiCounter; }
+  void setErrorStatus(bool theErrorStatus);
 
-  void interpretRawData( bool& errorsInEvent, int fedId,  const FEDRawData & data, Collection & digis);
+  int nWords() const { return m_WordCounter; }
 
-void formatRawData( unsigned int lvl1_ID, RawData & fedRawData, const Digis & digis, std::map< std::map<const uint32_t,short unsigned int>, std::map<short unsigned int,short unsigned int>> iDdet2fed);
+  void interpretRawData( bool& errorsInEvent, int fedId,  const FEDRawData & data, Collection & digis, Errors & errors);
+
+
 
 private:
 
-  mutable int theWordCounter;
-  mutable int theDigiCounter;
 
-  RPixErrorChecker errorcheck;
+  mutable int m_WordCounter;
+
+  bool m_IncludeErrors;
+  RPixErrorChecker m_ErrorCheck;
 
   int m_ADC_shift, m_PXID_shift, m_DCOL_shift, m_ROC_shift, m_LINK_shift;
   Word32 m_LINK_mask, m_ROC_mask, m_DCOL_mask, m_PXID_mask, m_ADC_mask;
-  int maxROCIndex;
   
 
-  int allDetDigis;
-  int hasDetDigis;
   int checkError(const Word32& data) const;
 
-  std::string print(const Word64    & word) const;
+  std::string print(const Word64& word) const;
 
-  const std::map<CTPPSPixelFramePosition, CTPPSPixelROCInfo> &mapping_;
-
-  CTPPSPixelIndices theIndices;
+  const std::map<CTPPSPixelFramePosition, CTPPSPixelROCInfo> &m_Mapping;
 
 };
 

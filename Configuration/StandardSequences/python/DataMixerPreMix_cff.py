@@ -4,7 +4,7 @@ import FWCore.ParameterSet.Config as cms
 
 from SimCalorimetry.Configuration.SimCalorimetry_cff import *
 
-from SimGeneral.DataMixingModule.mixOne_simraw_on_sim_cfi import *
+from SimGeneral.PreMixingModule.mixOne_premix_on_sim_cfi import *
 
 # Run after the DataMixer only.
 #
@@ -57,16 +57,16 @@ postDMDigi = cms.Sequence(ecalDigiSequenceDM+hcalDigiSequenceDM)
 # TrackingParticle Producer is now part of the mixing module, so
 # it is no longer run here.
 #
-from SimGeneral.PileupInformation.AddPileupSummaryPreMixed_cfi import *
+from SimGeneral.PileupInformation.AddPileupSummary_cfi import *
 
 
 
 pdatamix = cms.Sequence(mixData+postDMDigi+addPileupInfo)
 
 from Configuration.Eras.Modifier_fastSim_cff import fastSim
-if fastSim.isChosen():
+def _fastSimDigis(process):
     # pretend these digis have been through digi2raw and raw2digi, by using the approprate aliases
     # use an alias to make the mixed track collection available under the usual label
     from FastSimulation.Configuration.DigiAliases_cff import loadDigiAliases
-    loadDigiAliases(premix = True)
-    from FastSimulation.Configuration.DigiAliases_cff import generalTracks,ecalPreshowerDigis,ecalDigis,hcalDigis,muonDTDigis,muonCSCDigis,muonRPCDigis
+    loadDigiAliases(process, premix=True)
+modifyDataMixerPreMix_fastSimDigis = fastSim.makeProcessModifier(_fastSimDigis)
