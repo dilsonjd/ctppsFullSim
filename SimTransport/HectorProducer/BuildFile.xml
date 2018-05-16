@@ -3,9 +3,9 @@
 <use   name="SimDataFormats/GeneratorProducts"/>
 <use   name="SimDataFormats/Forward"/>
 <use   name="SimGeneral/HepPDTRecord"/>
-<use   name="IOMC/RandomEngine"/>
+<use   name="CTPPSTools/Utilities"/>
 <use   name="hector"/>
 <use   name="hepmc"/>
 <use   name="clhep"/>
 <use   name="root"/>
-<flags   EDM_PLUGIN="1"/>
+<flags EDM_PLUGIN="1"/>

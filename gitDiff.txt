@@ -1,0 +1,3744 @@
+diff --git a/DataFormats/CTPPSDetId/interface/TotemRPDetId.h b/DataFormats/CTPPSDetId/interface/TotemRPDetId.h
+index 9061423..d205d2f 100644
+--- a/DataFormats/CTPPSDetId/interface/TotemRPDetId.h
++++ b/DataFormats/CTPPSDetId/interface/TotemRPDetId.h
+@@ -38,7 +38,7 @@ class TotemRPDetId : public CTPPSDetId
+     {
+     }
+   
+-    /// Construct from hierarchy indeces.
++    /// Construct from hierarchy indices.
+     TotemRPDetId(uint32_t Arm, uint32_t Station, uint32_t RomanPot=0, uint32_t Plane=0, uint32_t Chip=0);
+ 
+     static const uint32_t startPlaneBit, maskPlane, maxPlane, lowMaskPlane;
+@@ -126,6 +126,14 @@ class TotemRPDetId : public CTPPSDetId
+       name += chipNames[chip()];
+     }
+ 
++    static uint32_t rawToDecId(uint32_t raw)
++    {
++      return ((raw >> startArmBit) & maskArm) * 1000
++             + ((raw >> startStationBit) & maskStation) * 100
++             + ((raw >> startRPBit) & maskRP) * 10
++             + ((raw >> startPlaneBit) & maskPlane);
++    }
++
+   private:
+     static const std::string planeNames[];
+     static const std::string chipNames[];
+diff --git a/DataFormats/CTPPSDigi/src/classes.h b/DataFormats/CTPPSDigi/src/classes.h
+index 61534dd..b45fac3 100644
+--- a/DataFormats/CTPPSDigi/src/classes.h
++++ b/DataFormats/CTPPSDigi/src/classes.h
+@@ -21,6 +21,10 @@
+ #include "DataFormats/CTPPSDigi/interface/CTPPSPixelDigiCollection.h"
+ #include "DataFormats/CTPPSDigi/interface/CTPPSPixelDataError.h"
+ 
++#include "DataFormats/CTPPSDigi/interface/RPStripDigi.h"
++#include "DataFormats/CTPPSDigi/interface/RPDetTrigger.h"
++#include "DataFormats/CTPPSDigi/interface/RPDigCluster.h"
++
+ #include <vector>
+ 
+ namespace DataFormats_CTPPSDigi {
+@@ -33,6 +37,28 @@ namespace DataFormats_CTPPSDigi {
+     edm::Wrapper<edm::DetSet<TotemRPDigi> > wds_rp_str_dig;
+     edm::Wrapper<edm::DetSetVector<TotemRPDigi> > wdsv_rp_str_dig;
+ 
++    RPStripDigi rp_str_digT;
++    edm::DetSet<RPStripDigi> ds_rp_str_digT;
++    std::vector<RPStripDigi> vec_rp_str_digT;
++    edm::DetSetVector<RPStripDigi> dsv_rp_str_digT;
++    std::vector<edm::DetSet<RPStripDigi> > vec_ds_rp_str_digT;
++    edm::Wrapper<edm::DetSet<RPStripDigi> > wds_rp_str_digT;
++    edm::Wrapper<edm::DetSetVector<RPStripDigi> > wdsv_rp_str_digT;
++
++    RPDetTrigger rp_str_tri;
++    edm::DetSet<RPDetTrigger> ds_rp_str_tri;
++    std::vector<RPDetTrigger> vec_rp_str_tri;
++    std::vector<edm::DetSet<RPDetTrigger> > vec_ds_rp_str_tri;
++    edm::DetSetVector<RPDetTrigger> dsv_rp_str_tri;
++    edm::Wrapper<edm::DetSet<RPDetTrigger> > wds_rp_str_tri;
++    edm::Wrapper<edm::DetSetVector<RPDetTrigger> > wdsv_rp_str_tri;
++
++    RPDigCluster dc;
++    edm::DetSet<RPDigCluster> dsdc;
++    std::vector<RPDigCluster> svdc;
++    std::vector<edm::DetSet<RPDigCluster> > svdsdc;
++    edm::DetSetVector<RPDigCluster> dsvdc;
++    edm::Wrapper<edm::DetSetVector<RPDigCluster> > wdsvdc;
+     TotemTriggerCounters dummy10;
+     edm::Wrapper<TotemTriggerCounters> dummy11;
+ 
+diff --git a/DataFormats/CTPPSDigi/src/classes_def.xml b/DataFormats/CTPPSDigi/src/classes_def.xml
+index c39918d..8a11b30 100644
+--- a/DataFormats/CTPPSDigi/src/classes_def.xml
++++ b/DataFormats/CTPPSDigi/src/classes_def.xml
+@@ -9,6 +9,35 @@
+   <class name="edm::Wrapper<edm::DetSet<TotemRPDigi> >"/>
+   <class name="edm::Wrapper<edm::DetSetVector<TotemRPDigi> >"/>
+ 
++  <class name="RPStripDigi" ClassVersion="3">
++    <version ClassVersion="3" checksum="3649241185"/>
++  </class>
++  <class name="edm::DetSet<RPStripDigi>"/>
++  <class name="std::vector<edm::DetSet<RPStripDigi> >"/>
++  <class name="std::vector<RPStripDigi>"/>
++  <class name="edm::DetSetVector<RPStripDigi>"/>
++  <class name="edm::Wrapper<edm::DetSet<RPStripDigi> >"/>
++  <class name="edm::Wrapper<edm::DetSetVector<RPStripDigi> >"/>
++ 
++  <class name="RPDetTrigger" ClassVersion="4">
++    <version ClassVersion="4" checksum="467767359"/>
++  </class>
++  <class name="edm::DetSet<RPDetTrigger>"/>
++  <class name="std::vector<edm::DetSet<RPDetTrigger> >"/>
++  <class name="std::vector<RPDetTrigger>"/>
++  <class name="edm::DetSetVector<RPDetTrigger>"/>
++  <class name="edm::Wrapper<edm::DetSetVector<RPDetTrigger> >"/>
++  <class name="edm::Wrapper<edm::DetSet<RPDetTrigger> >"/>
++
++  <class name="RPDigCluster" ClassVersion="5">
++    <version ClassVersion="5" checksum="2487179143"/>
++  </class>
++  <class name="edm::DetSet<RPDigCluster>"/>
++  <class name="std::vector<RPDigCluster>"/>
++  <class name="std::vector<edm::DetSet<RPDigCluster> >"/>
++  <class name="edm::DetSetVector<RPDigCluster>"/>
++  <class name="edm::Wrapper<edm::DetSetVector<RPDigCluster> >"/>
++
+   <class name="TotemTriggerCounters" ClassVersion="2">
+     <version ClassVersion="2" checksum="719923071"/>
+   </class>
+diff --git a/EventFilter/CTPPSRawToDigi/interface/CTPPSPixelDataFormatter.h b/EventFilter/CTPPSRawToDigi/interface/CTPPSPixelDataFormatter.h
+index 0862379..295abf9 100644
+--- a/EventFilter/CTPPSRawToDigi/interface/CTPPSPixelDataFormatter.h
++++ b/EventFilter/CTPPSRawToDigi/interface/CTPPSPixelDataFormatter.h
+@@ -39,6 +39,10 @@
+ 
+ #include "EventFilter/CTPPSRawToDigi/interface/RPixErrorChecker.h"
+ 
++#include "CondFormats/CTPPSReadoutObjects/interface/CTPPSPixelIndices.h"
++#include "CondFormats/CTPPSReadoutObjects/interface/CTPPSElectronicIndex.h"
++#include "FWCore/Utilities/interface/typedefs.h"
++
+ #include <cstdint>
+ #include <vector>
+ #include <map>
+@@ -61,6 +65,8 @@ public:
+   typedef uint32_t Word32;
+   typedef uint64_t Word64;
+ 
++  typedef std::map<cms_uint32_t,DetDigis> Digis;
++
+   CTPPSPixelDataFormatter(std::map<CTPPSPixelFramePosition, CTPPSPixelROCInfo> const &mapping);
+ 
+   void setErrorStatus(bool theErrorStatus);
+@@ -69,11 +75,12 @@ public:
+ 
+   void interpretRawData( bool& errorsInEvent, int fedId,  const FEDRawData & data, Collection & digis, Errors & errors);
+ 
++  int nDigis() const { return m_DigiCounter; }
+ 
++  void formatRawData( unsigned int lvl1_ID, RawData & fedRawData, const Digis & digis, std::map< std::map<const uint32_t,std::map<short unsigned int, short unsigned int>>, std::map<short unsigned int,short unsigned int>> iDdet2fed);
+ 
+ private:
+ 
+-
+   mutable int m_WordCounter;
+ 
+   bool m_IncludeErrors;
+@@ -81,14 +88,18 @@ private:
+ 
+   int m_ADC_shift, m_PXID_shift, m_DCOL_shift, m_ROC_shift, m_LINK_shift;
+   Word32 m_LINK_mask, m_ROC_mask, m_DCOL_mask, m_PXID_mask, m_ADC_mask;
+-  
+-
++ 
+   int checkError(const Word32& data) const;
+ 
+   std::string print(const Word64& word) const;
+ 
+   const std::map<CTPPSPixelFramePosition, CTPPSPixelROCInfo> &m_Mapping;
+ 
++  mutable int m_DigiCounter;
++  int maxROCIndex;
++  int allDetDigis;
++  int hasDetDigis;
++  CTPPSPixelIndices theIndices;
+ };
+ 
+ #endif
+diff --git a/EventFilter/CTPPSRawToDigi/python/totemVFATRawToDigi_cfi.py b/EventFilter/CTPPSRawToDigi/python/totemVFATRawToDigi_cfi.py
+index c9f7ab1..b69db80 100644
+--- a/EventFilter/CTPPSRawToDigi/python/totemVFATRawToDigi_cfi.py
++++ b/EventFilter/CTPPSRawToDigi/python/totemVFATRawToDigi_cfi.py
+@@ -27,7 +27,7 @@ totemVFATRawToDigi = cms.EDProducer("TotemVFATRawToDigi",
+     # 2: print an error message and do not process the frame
+     testFootprint = cms.uint32(2),
+     testCRC = cms.uint32(2),
+-    testID = cms.uint32(2),               # compare the ID from data and mapping
++    testID = cms.uint32(1),               # compare the ID from data and mapping
+     testECMostFrequent = cms.uint32(2),   # compare frame's EC with the most frequent value in the event
+     testBCMostFrequent = cms.uint32(2),   # compare frame's BC with the most frequent value in the event
+ 
+diff --git a/EventFilter/CTPPSRawToDigi/src/CTPPSPixelDataFormatter.cc b/EventFilter/CTPPSRawToDigi/src/CTPPSPixelDataFormatter.cc
+index 1cdb122..9f8aa1f 100644
+--- a/EventFilter/CTPPSRawToDigi/src/CTPPSPixelDataFormatter.cc
++++ b/EventFilter/CTPPSRawToDigi/src/CTPPSPixelDataFormatter.cc
+@@ -14,6 +14,8 @@
+ #include <iostream>
+ 
+ using namespace edm;
++using namespace std;
++using namespace ctppspixelobjects;
+ 
+ namespace {
+   constexpr int m_LINK_bits = 6;
+@@ -43,7 +45,7 @@ CTPPSPixelDataFormatter::CTPPSPixelDataFormatter(std::map<CTPPSPixelFramePositio
+       <<", send exception" ;
+   }
+ 
+-  m_IncludeErrors = false;
++  //m_IncludeErrors = false;
+ 
+   m_ADC_shift  = 0;
+   m_PXID_shift = m_ADC_shift + m_ADC_bits;
+@@ -61,14 +63,12 @@ CTPPSPixelDataFormatter::CTPPSPixelDataFormatter(std::map<CTPPSPixelFramePositio
+ 
+ }
+ 
+-
+ void CTPPSPixelDataFormatter::setErrorStatus(bool errorStatus)
+ {
+   m_IncludeErrors = errorStatus;
+   m_ErrorCheck.setErrorStatus(m_IncludeErrors);
+ }
+ 
+-
+ void CTPPSPixelDataFormatter::interpretRawData(  bool& errorsInEvent, int fedId, const FEDRawData& rawData, 
+                                                 Collection & digis, Errors & errors)
+ {
+@@ -188,6 +188,110 @@ void CTPPSPixelDataFormatter::interpretRawData(  bool& errorsInEvent, int fedId,
+ 
+ }
+ 
++void CTPPSPixelDataFormatter::formatRawData(unsigned int lvl1_ID, RawData & fedRawData, const Digis & digis, std::map<std::map<const uint32_t,std::map<short unsigned int, short unsigned int> >, std::map<short unsigned int,short unsigned int>> iDdet2fed)
++{
++  std::map<int, vector< Word32 > > words; 
++
++  // translate digis into 32-bit raw words and store in map indexed by Fed
++ 
++  for (Digis::const_iterator im = digis.begin(); im != digis.end(); im++) {
++    //if (mapping_.size== 0 ) return; 
++    allDetDigis++;
++    cms_uint32_t rawId = im->first;
++      edm::LogInfo("--- RPix") << " \t\t digi rawId = " << rawId;
++
++    hasDetDigis++;
++    const DetDigis & detDigis = im->second;
++    for (DetDigis::const_iterator it = detDigis.begin(); it != detDigis.end(); it++) {
++        m_DigiCounter++;
++
++        const CTPPSPixelDigi & digi = (*it);
++        int matchRoc = 999, matchfedId = 999, nroc = 999, nlink = 999, rocinCh = 999;
++        int rocPixelRow = -1, rocPixelColumn = -1, rocID = -1;
++        int modulePixelColumn = digi.column();
++        int modulePixelRow = digi.row();
++
++        theIndices.transformToROC(modulePixelColumn, modulePixelRow, rocID, rocPixelColumn, rocPixelRow);
++        const int dcol = theIndices.DColumn(rocPixelColumn);
++        const int pxid =  2*(ROCSizeInX-rocPixelRow)+ (rocPixelColumn%2);
++        for (auto &p : iDdet2fed) {
++           for (auto &pf : p.first){
++              cms_uint32_t prawId = pf.first;
++              for (auto &pfs : pf.second){
++               rocinCh = pfs.second; 
++              if (prawId == rawId){
++                matchRoc = pfs.first;
++                if (matchRoc == rocID){
++                   for (auto &ps : p.second){
++                      matchfedId = ps.first;
++                      nlink = ps.second;
++                     nroc = rocinCh + 1; 
++
++                      CTPPSElectronicIndex cabling = {nlink, nroc, dcol, pxid};
++
++                      cms_uint32_t word =
++                               (cabling.link << m_LINK_shift)
++                             | (cabling.roc  << m_ROC_shift)
++                             | (cabling.dcol << m_DCOL_shift)
++                             | (cabling.pxid << m_PXID_shift)
++                             | (digi.adc() << m_ADC_shift);
++                      words[matchfedId].push_back(word);
++                      m_WordCounter++;
++                   }
++                 } //if rocID
++               }//pfs
++              } // if prawId
++           }
++        }
++    } // for DetDigis
++  } // for Digis
++  LogTrace(" allDetDigis/hasDetDigis : ") << allDetDigis<<"/"<<hasDetDigis;
++  typedef std::map<int, vector<Word32> >::const_iterator RI;
++  for (RI feddata = words.begin(); feddata != words.end(); feddata++) {
++    int fedId = feddata->first;
++
++    // since raw words are written in the form of 64-bit packets
++    // add extra 32-bit word to make number of words even if necessary
++    if (words.find(fedId)->second.size() %2 != 0) words[fedId].push_back( Word32(0) );
++
++    // size in Bytes; create output structure
++    int dataSize = words.find(fedId)->second.size() * sizeof(Word32);
++    int nHeaders = 1;
++    int nTrailers = 1;
++    dataSize += (nHeaders+nTrailers)*sizeof(Word64);
++
++    FEDRawData * rawData = new FEDRawData(dataSize);
++
++    // get begining of data;
++    Word64 * word = reinterpret_cast<Word64* >(rawData->data());
++
++    // write one header
++    FEDHeader::set(  reinterpret_cast<unsigned char*>(word), 0, lvl1_ID, 0, fedId);
++    word++;
++
++    // write data
++    unsigned int nWord32InFed = words.find(fedId)->second.size();
++    for (unsigned int i=0; i < nWord32InFed; i+=2) {
++      *word = (Word64(words.find(fedId)->second[i]) << 32 ) | words.find(fedId)->second[i+1];
++      LogDebug("CTPPSPixelDataFormatter")  << print(*word);
++      word++;
++
++    }
++
++    // write one trailer
++    FEDTrailer::set(  reinterpret_cast<unsigned char*>(word), dataSize/sizeof(Word64), 0,0,0);
++    word++;
++
++    // check memory
++    if (word != reinterpret_cast<Word64* >(rawData->data()+dataSize)) {
++      string s = "** PROBLEM in CTPPSPixelDataFormatter !!!";
++      LogError("CTPPSPixelDataFormatter") << "** PROBLEM in CTPPSPixelDataFormatter!!!";
++      throw cms::Exception(s);
++    } // if (word !=
++    fedRawData[fedId] = *rawData;
++    delete rawData;
++  } // for (RI feddata 
++}
+ 
+ std::string CTPPSPixelDataFormatter::print(const  Word64 & word) const
+ {
+diff --git a/EventFilter/CTPPSRawToDigi/src/RawToDigiConverter.cc b/EventFilter/CTPPSRawToDigi/src/RawToDigiConverter.cc
+index 72c7f36..67809f3 100644
+--- a/EventFilter/CTPPSRawToDigi/src/RawToDigiConverter.cc
++++ b/EventFilter/CTPPSRawToDigi/src/RawToDigiConverter.cc
+@@ -2,7 +2,7 @@
+ *
+ * This is a part of TOTEM offline software.
+ * Authors:
+-*   Jan Ka<C5><A1>par (jan.kaspar@gmail.com)
++*   Jan Ka??par (jan.kaspar@gmail.com)
+ *   Seyed Mohsen Etesami (setesami@cern.ch)
+ ****************************************************************************/
+ 
+@@ -237,21 +237,34 @@ void RawToDigiConverter::run(const VFATFrameCollection &input,
+           record.status.setPartiallyMaskedOut();
+       }
+ 
+-      // create the digi
++      // create the digi. Add correction in order to get the full channel value
++
+       unsigned short offset = chipPosition * 128;
+       const vector<unsigned char> &activeChannels = record.frame->getActiveChannels();
+-
++      vector<unsigned char> vtempCH;
++           
+       for (auto ch : activeChannels)
+       {
+         // skip masked channels
+         if (!anMa.fullMask && anMa.maskedChannels.find(ch) == anMa.maskedChannels.end())
+         {
+-          DetSet<TotemRPDigi> &digiDetSet = rpData.find_or_insert(detId);
+-          digiDetSet.push_back(TotemRPDigi(offset + ch));
++          vtempCH.push_back(ch);
++          if(activeChannels.size() == vtempCH.size()) {
++            unsigned char channel = 0;
++            for(std::vector<unsigned char>::iterator it = vtempCH.begin() ; it != vtempCH.end(); ++it) {
++              channel |= 1 << *it;
++              if(*it > 15) channel |= 1 << ((*it)-16);
++              if(*it < *next(it) || *it == ch ) {
++                DetSet<TotemRPDigi> &digiDetSet = rpData.find_or_insert(detId);
++                digiDetSet.push_back(TotemRPDigi(offset + channel));
++                channel = 0;
++              }
++            }
++          }
+         }
+       }
+     }
+-
++ 
+     // save status
+     DetSet<TotemVFATStatus> &statusDetSet = finalStatus.find_or_insert(detId);
+     statusDetSet.push_back(record.status);
+diff --git a/EventFilter/RawDataCollector/python/rawDataCollector_cfi.py b/EventFilter/RawDataCollector/python/rawDataCollector_cfi.py
+index 173d1ec..9a63e28 100644
+--- a/EventFilter/RawDataCollector/python/rawDataCollector_cfi.py
++++ b/EventFilter/RawDataCollector/python/rawDataCollector_cfi.py
+@@ -34,3 +34,8 @@ run2_GEM_2017.toModify( rawDataCollector.RawCollectionList, func = lambda list:
+ 
+ from Configuration.Eras.Modifier_run3_GEM_cff import run3_GEM
+ run3_GEM.toModify( rawDataCollector.RawCollectionList, func = lambda list: list.append(cms.InputTag("gemPacker")) )
++
++from Configuration.Eras.Modifier_ctpps_2016_cff import ctpps_2016
++ctpps_2016.toModify(rawDataCollector.RawCollectionList, func = lambda list:list.append(cms.InputTag("ctppsTotemRawData")) )
++ctpps_2016.toModify(rawDataCollector.RawCollectionList, func = lambda list:list.append(cms.InputTag("ctppsPixelRawData")) )
++
+diff --git a/Geometry/CMSCommonData/data/extend/cmsextent.xml b/Geometry/CMSCommonData/data/extend/cmsextent.xml
+index 61c0e49..394daf8 100644
+--- a/Geometry/CMSCommonData/data/extend/cmsextent.xml
++++ b/Geometry/CMSCommonData/data/extend/cmsextent.xml
+@@ -13,15 +13,20 @@
+        </ConstantsSection>
+        <SolidSection label="cmsextent.xml">
+                <Tubs name="CMStoZDC" rMin="[Rmin]" rMax="[CMSR2]" dz="56*m" startPhi="0*deg" deltaPhi="360*deg"/>
+-               <Tubs name="ZDCtoFP420" rMin="[Rmin]" rMax="[CMSR2]" dz="120*m" startPhi="0*deg" deltaPhi="360*deg"/>
++               <Tubs name="ZDCtoVF200" rMin="[Rmin]" rMax="[CMSR2]" dz="26*m" startPhi="0*deg" deltaPhi="360*deg"/>
++               <Tubs name="VF200toFP420" rMin="[Rmin]" rMax="[CMSR2]" dz="89.392*m" startPhi="0*deg" deltaPhi="360*deg"/>
+        </SolidSection>
+        <LogicalPartSection label="cmsextent.xml">
+                <LogicalPart name="CMStoZDC" category="unspecified">
+                        <rSolid name="CMStoZDC"/>
+                        <rMaterial name="materials:Air"/>
+                </LogicalPart>
+-               <LogicalPart name="ZDCtoFP420" category="unspecified">
+-                       <rSolid name="ZDCtoFP420"/>
++               <LogicalPart name="ZDCtoVF200" category="unspecified">
++                       <rSolid name="ZDCtoVF200"/>
++                       <rMaterial name="materials:Air"/>
++               </LogicalPart>
++               <LogicalPart name="VF200toFP420" category="unspecified">
++                       <rSolid name="VF200toFP420"/>
+                        <rMaterial name="materials:Air"/>
+                </LogicalPart>
+        </LogicalPartSection>
+@@ -38,19 +43,30 @@
+                </PosPart>
+                <PosPart copyNumber="1">
+                        <rParent name="cms:CMSE"/>
+-                       <rChild name="cmsextent:ZDCtoFP420"/>
+-                       <Translation x="0*fm" y="0*fm" z="270*m"/>
++                       <rChild name="cmsextent:ZDCtoVF200"/>
++                       <Translation x="0*fm" y="0*fm" z="176.769*m"/>
++               </PosPart>
++               <PosPart copyNumber="2">
++                       <rParent name="cms:CMSE"/>
++                       <rChild name="cmsextent:ZDCtoVF200"/>
++                       <Translation x="0*fm" y="0*fm" z="-176.769*m"/>
++               </PosPart>
++               <PosPart copyNumber="1">
++                       <rParent name="cms:CMSE"/>
++                       <rChild name="cmsextent:VF200toFP420"/>
++                       <Translation x="0*fm" y="0*fm" z="310.*m"/>
+                </PosPart>
+                <PosPart copyNumber="2">
+                        <rParent name="cms:CMSE"/>
+-                       <rChild name="cmsextent:ZDCtoFP420"/>
+-                       <Translation x="0*fm" y="0*fm" z="-270*m"/>
++                       <rChild name="cmsextent:VF200toFP420"/>
++                       <Translation x="0*fm" y="0*fm" z="-310.*m"/>
+                </PosPart>
+        </PosPartSection>
+        <SpecParSection label="cmsextent.xml" eval="true">
+                <SpecPar name="cmsextent">
+                        <PartSelector path="//CMStoZDC"/>
+-                       <PartSelector path="//ZDCtoFP420"/>
++                       <PartSelector path="//ZDCtoVF200"/>
++                       <PartSelector path="//VF200toFP420"/>
+                        <Parameter name="CMSCutsRegion" value="InterimRegion" eval="false"/>
+                        <Parameter name="ProdCutsForElectrons" value="1*mm"/>
+                        <Parameter name="ProdCutsForPositrons" value="1*mm"/>
+diff --git a/Geometry/VeryForwardData/data/CTPPS_Diamond_Sensitive_Dets.xml b/Geometry/VeryForwardData/data/CTPPS_Diamond_Sensitive_Dets.xml
+index 70fa8ae..67a18b7 100644
+--- a/Geometry/VeryForwardData/data/CTPPS_Diamond_Sensitive_Dets.xml
++++ b/Geometry/VeryForwardData/data/CTPPS_Diamond_Sensitive_Dets.xml
+@@ -8,7 +8,7 @@
+             <PartSelector path="//CTPPS_Diamond_Pattern.*_Segment.*:CTPPS_Diamond_Segment"/>
+ 
+             <Parameter name="SensitiveDetector" value="CTPPSDiamondSensitiveDetector" eval="false"/>
+-            <Parameter name="ReadOutName" value="CTPPSHitsDiamond" eval="false"/>
++            <Parameter name="ReadOutName" value="CTPPSTimingHits" eval="false"/>
+         </SpecPar>
+     </SpecParSection>
+ </DDDefinition>
+diff --git a/Geometry/VeryForwardData/data/CTPPS_UFSD_Sensitive_Dets.xml b/Geometry/VeryForwardData/data/CTPPS_UFSD_Sensitive_Dets.xml
+index 1f1c9d3..019e38e 100644
+--- a/Geometry/VeryForwardData/data/CTPPS_UFSD_Sensitive_Dets.xml
++++ b/Geometry/VeryForwardData/data/CTPPS_UFSD_Sensitive_Dets.xml
+@@ -3,10 +3,14 @@
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://www.cern.ch/cms/DDL ../../DDLSchema/DDLSchema.xsd">
+     <SpecParSection label="CTPPS_UFSD_Sensitive_Dets.xml">
+-        <SpecPar name="ROUHitsCTPPSTiming">
+-            <PartSelector path="//CTPPS_UFSD_Plane"/>
++        <SpecPar name="ROUHitsCTPPSUSFD">
++
++            <PartSelector path="//CTPPS_UFSD_Pattern1:CTPPS_UFSD_Segment"/>
++            <PartSelector path="//CTPPS_UFSD_Pattern2_SegmentA:CTPPS_UFSD_Segment"/>
++            <PartSelector path="//CTPPS_UFSD_Pattern2_SegmentB:CTPPS_UFSD_Segment"/>
++
+             <Parameter name="SensitiveDetector" value="CTPPSUFSDSensitiveDetector" eval="false"/>
+-            <Parameter name="ReadOutName" value="CTPPSHitsUFSD" eval="false"/>
++            <Parameter name="ReadOutName" value="CTPPSTimingHits" eval="false"/>
+         </SpecPar>
+     </SpecParSection>
+ </DDDefinition>
+diff --git a/Geometry/VeryForwardGeometry/interface/CTPPSPixelSimTopology.h b/Geometry/VeryForwardGeometry/interface/CTPPSPixelSimTopology.h
+index 10864fa..197c70b 100644
+--- a/Geometry/VeryForwardGeometry/interface/CTPPSPixelSimTopology.h
++++ b/Geometry/VeryForwardGeometry/interface/CTPPSPixelSimTopology.h
+@@ -1,212 +1,274 @@
+-#ifndef Geometry_VeryForwardGeometry_CTPPSPixelSimTopology_h
+-#define Geometry_VeryForwardGeometry_CTPPSPixelSimTopology_h
++#ifndef Geometry_VeryForwardGeometry_CTPPSPixelSimTopology_H
++#define Geometry_VeryForwardGeometry_CTPPSPixelSimTopology_H
+ 
+ #include "TMath.h"
+ #include "Geometry/VeryForwardGeometry/interface/CTPPSPixelTopology.h"
+ 
+-class CTPPSPixelSimTopology : public CTPPSPixelTopology
++/* simX and simY are the coordinates as in the simulation: 
++   _______
++   |         |
++   |         |  y
++   |         |
++   ---------
++   x
++
++*/
++
++class pixel_info
+ {
+-  public:
+-    /* simX and simY are the coordinates as in the simulation:
+-        _________
+-       |         |
+-       |         |  y
+-       |_________|
+-
+-       x
+-    */
+-    class PixelInfo
+-    {
+-      public:
+-        PixelInfo( double lower_simX_border, double higher_simX_border, double lower_simY_border, double higher_simY_border, double eff_factor, unsigned short pixel_row_no, unsigned short pixel_col_no ) :
+-          lower_simX_border_( lower_simX_border ), higher_simX_border_( higher_simX_border ),
+-          lower_simY_border_( lower_simY_border ), higher_simY_border_( higher_simY_border ),
+-          eff_factor_( eff_factor ),
+-          pixel_row_no_( pixel_row_no ), pixel_col_no_( pixel_col_no ),
+-          pixel_index_( pixel_col_no*CTPPSPixelTopology::no_of_pixels_simX_+pixel_row_no )
+-        {}
+-
+-        inline double higherSimXBorder() const { return higher_simX_border_; }
+-        inline double lowerSimXBorder() const { return lower_simX_border_; }
+-        inline double higherSimYBorder() const { return higher_simY_border_; }
+-        inline double lowerSimYBorder() const { return lower_simY_border_; }
+-        inline double effFactor() const { return eff_factor_; }
+-        inline unsigned short pixelRowNo() const { return pixel_row_no_; }
+-        inline unsigned short pixelColNo() const { return pixel_col_no_; }
+-        inline unsigned short pixelIndex() const { return pixel_index_; }
+-
+-      private:
+-        double lower_simX_border_;
+-        double higher_simX_border_;
+-        double lower_simY_border_;
+-        double higher_simY_border_;
+-        double eff_factor_;
+-        unsigned short pixel_row_no_;
+-        unsigned short pixel_col_no_;
+-        unsigned short pixel_index_;
+-    };
+-
+-  public:
+-    CTPPSPixelSimTopology();
+-    ~CTPPSPixelSimTopology() {}
+-
+-    PixelInfo getPixelsInvolved( double x, double y, double sigma, double& hit_pos_x, double& hit_pos_y ) const;
+-
+-    inline void pixelRange( unsigned int arow, unsigned int acol, double& lower_x, double& higher_x, double& lower_y, double& higher_y ) const {
+-      // x and y in the system  of Geant4 SIMULATION
+-      arow = 159 - arow;
+-      if ( arow > 159 || acol > 155 )
+-        throw cms::Exception("CTPPSPixelSimTopology")<< "rows or columns exceeding limits";
+-
+-      // rows (x segmentation)
+-      if ( arow == 0 ) {
+-        lower_x = 0;
+-        higher_x = 0.3;
+-      }
+-      else if ( arow <= 78 ) {
+-        lower_x =  0.3 + ( arow-1 )*pitch_simX_;
+-        higher_x = 0.3 +   arow    *pitch_simX_;
+-      }
+-      else if ( arow == 79 ) {
+-        lower_x =  0.3 + ( arow-1 )*pitch_simX_;
+-        higher_x = 0.3 + ( arow+1 )*pitch_simX_;
+-      }
+-      else if ( arow == 80 ) {
+-        lower_x =  0.3 +   arow    *pitch_simX_;
+-        higher_x = 0.3 + ( arow+2 )*pitch_simX_;
+-      }
+-      else if ( arow <= 158 ) {
+-        lower_x =  0.3 + ( arow+1 )*pitch_simX_;
+-        higher_x = 0.3 + ( arow+2 )*pitch_simX_;
+-      }
+-      else if ( arow == 159) {
+-        lower_x =  0.3 + ( arow+1 )*pitch_simX_;
+-        higher_x = 0.3 + ( arow+4 )*pitch_simX_;
+-      }
+-
+-      // columns (y segmentation)
+-      if( acol == 0 ) {
+-        lower_y = 0;
+-        higher_y = 0.35;
+-      }
+-      else if ( acol <= 50 ) {
+-        lower_y =  0.35 + ( acol-1 )*pitch_simY_;
+-        higher_y = 0.35 +   acol    *pitch_simY_;
+-      }
+-      else if ( acol == 51 ) {
+-        lower_y =  0.35 + ( acol-1 )*pitch_simY_;
+-        higher_y = 0.35 + ( acol+1 )*pitch_simY_;
+-      }
+-      else if ( acol == 52 ) {
+-        lower_y =  0.35 +   acol    *pitch_simY_;
+-        higher_y = 0.35 + ( acol+2 )*pitch_simY_;
+-      }
+-      else if ( acol <= 102 ) {
+-        lower_y =  0.35 + ( acol+1 )*pitch_simY_;
+-        higher_y = 0.35 + ( acol+2 )*pitch_simY_;
+-      }
+-      else if ( acol == 103 ) {
+-        lower_y =  0.35 + ( acol+1 )*pitch_simY_;
+-        higher_y = 0.35 + ( acol+3 )*pitch_simY_;
+-      }
+-      else if ( acol == 104) {
+-        lower_y =  0.35 + ( acol+2 )*pitch_simY_;
+-        higher_y = 0.35 + ( acol+4 )*pitch_simY_;
+-      }
+-      else if ( acol <= 154 ) {
+-        lower_y =  0.35 + ( acol+3 )*pitch_simY_;
+-        higher_y = 0.35 + ( acol+4 )*pitch_simY_;
+-      }
+-      else if ( acol == 155 ) {
+-        lower_y =  0.35 + ( acol+3 )*pitch_simY_;
+-        higher_y = 0.35 + ( acol+4 )*pitch_simY_ + 0.2;
+-      }
+-
+-      lower_x = lower_x - simX_width_/2.;
+-      lower_y = lower_y - simY_width_/2.;
+-      higher_x = higher_x - simX_width_/2.;
+-      higher_y = higher_y - simY_width_/2.;
+-    }
+ 
+-  private:
+-    double active_edge_x_;
+-    double active_edge_y_;
++public:
++
++pixel_info(double lower_simX_border, double higher_simX_border, double lower_simY_border, double higher_simY_border, double eff_factor, unsigned short pixel_row_no, unsigned short pixel_col_no) : 
++  lower_simX_border_(lower_simX_border), 
++    higher_simX_border_(higher_simX_border), 
++    lower_simY_border_(lower_simY_border), 
++    higher_simY_border_(higher_simY_border), 
++    eff_factor_(eff_factor), 
++    pixel_row_no_(pixel_row_no), 
++    pixel_col_no_(pixel_col_no),
++    pixel_index_(pixel_col_no*CTPPSPixelTopology::no_of_pixels_simX_+pixel_row_no)
++    {}
++
++  inline double higherSimXBorder() const {return higher_simX_border_;}
++  inline double lowerSimXBorder() const {return lower_simX_border_;}
++  inline double higherSimYBorder() const {return higher_simY_border_;}
++  inline double lowerSimYBorder() const {return lower_simY_border_;}
++  inline double effFactor() const {return eff_factor_;}
++  inline unsigned short pixelRowNo() const {return pixel_row_no_;}
++  inline unsigned short pixelColNo() const {return pixel_col_no_;}
++  inline unsigned short pixelIndex() const {return pixel_index_;}
+     
+-    inline double activeEdgeFactor( double x, double y ) const {
+-      const double inv_sigma = 1./active_edge_sigma_; // precaching
+-      const double topEdgeFactor =    TMath::Erf( -distanceFromTopActiveEdge( x, y )   *inv_sigma )*0.5 + 0.5;
+-      const double bottomEdgeFactor = TMath::Erf( -distanceFromBottomActiveEdge( x, y )*inv_sigma )*0.5 + 0.5;
+-      const double rightEdgeFactor =  TMath::Erf( -distanceFromRightActiveEdge( x, y ) *inv_sigma )*0.5 + 0.5;
+-      const double leftEdgeFactor =   TMath::Erf( -distanceFromLeftActiveEdge( x, y )  *inv_sigma )*0.5 + 0.5;
+ 
+-      const double aEF = topEdgeFactor*bottomEdgeFactor*rightEdgeFactor*leftEdgeFactor;
++private:
+ 
+-      if ( aEF > 1. )
+-        throw cms::Exception("CTPPSPixelSimTopology")<< " active edge factor > 1";
++  double lower_simX_border_;
++  double higher_simX_border_;
++  double lower_simY_border_;
++  double higher_simY_border_;
++  double eff_factor_;
++  unsigned short pixel_row_no_;
++  unsigned short pixel_col_no_;
++  unsigned short pixel_index_;
++};
+ 
+-      return aEF;
+-    }
++class CTPPSPixelSimTopology : public CTPPSPixelTopology
++{
++
++public:
++  CTPPSPixelSimTopology();
++  ~CTPPSPixelSimTopology(){};
++
++  std::vector<pixel_info> getPixelsInvolved(double x, double y, double sigma, double &hit_pos_x, double &hit_pos_y);
+ 
+-    inline double distanceFromTopActiveEdge( double x, double y ) const { return ( y-active_edge_y_ ); }
+-    inline double distanceFromBottomActiveEdge( double x, double y ) const { return ( -y-active_edge_y_ ); }
+-    inline double distanceFromRightActiveEdge( double x, double y ) const { return ( x-active_edge_x_ ); }
+-    inline double distanceFromLeftActiveEdge( double x, double y ) const { return ( -x-active_edge_x_ ); }
++  inline void pixelRange(unsigned int arow, unsigned int acol, double &lower_x, double &higher_x, double &lower_y, double &higher_y){
++       
++// x and y in the system  of Geant4 SIMULATION
+ 
+-    inline unsigned int row( double x ) const {
+-      // x in the G4 simulation system
+-      x = x + simX_width_/2.;
++    arow = 159 - arow;
++
++    if(!(arow<=159 && acol <=155))
++      throw cms::Exception("CTPPSPixelSimTopology")<< " rows or columns exceeding limits";
+  
+-      // now x in the system centered in the bottom left corner of the sensor (sensor view, rocs behind)
+-      if ( x < 0. || x > simX_width_ )
+-        throw cms::Exception("CTPPSPixelSimTopology")<< "out of reference frame";
+-
+-      // rows (x segmentation)
+-      unsigned int arow;
+-      if      ( x <= ( dead_edge_width_+    pitch_simX_ ) ) arow = 0;
+-      else if ( x <= ( dead_edge_width_+ 79*pitch_simX_ ) ) arow = int( ( x-dead_edge_width_-pitch_simX_ )/pitch_simX_ )+1;
+-      else if ( x <= ( dead_edge_width_+ 81*pitch_simX_ ) ) arow = 79;
+-      else if ( x <= ( dead_edge_width_+ 83*pitch_simX_ ) ) arow = 80;
+-      else if ( x <= ( dead_edge_width_+162*pitch_simX_ ) ) arow = int( ( x-dead_edge_width_-pitch_simX_ )/pitch_simX_ )-1;
+-      else arow = 159;
+-
+-      arow = 159-arow;
+-      if ( arow>159 )
+-        throw cms::Exception("CTPPSPixelSimTopology")<< "row number exceeding limit";
+-
+-      return arow;
++// rows (x segmentation)
++    
++    if(arow == 0) {
++      lower_x = 0;
++      higher_x = 0.3;
++    }
++    if( arow > 0 && arow <= 78 ){
++      lower_x = 0.3 + (arow-1)*pitch_simX_;
++      higher_x = 0.3 + arow*pitch_simX_;
++    } 
++    if(arow == 79) {
++      lower_x = 0.3 + (arow-1)*pitch_simX_;
++      higher_x = 0.3 + (arow+1)*pitch_simX_;
+     }
++    if(arow == 80) {
++      lower_x = 0.3 + (arow)*pitch_simX_;
++      higher_x = 0.3 + (arow+2)*pitch_simX_;
++    }
++    if( arow > 80 && arow <= 158 ){
++      lower_x = 0.3 + (arow+1)*pitch_simX_;
++      higher_x = 0.3 + (arow+2)*pitch_simX_;
++    } 
++    if( arow == 159){
++      lower_x = 0.3 + (arow+1)*pitch_simX_;
++      higher_x = 0.3 + (arow+4)*pitch_simX_;
++    } 
++
++// columns (y segmentation)
+ 
+-    inline unsigned int col( double y ) const {
+-      // y in the G4 simulation system
+-      unsigned int column;
+-
+-      // columns (y segmentation)
+-      // now y in the system centered in the bottom left corner of the sensor (sensor view, rocs behind)
+-      y = y + simY_width_/2.;
+-      if ( y < 0. || y > simY_width_ )
+-        throw cms::Exception("CTPPSPixelSimTopology")<< " out of reference frame";
+-
+-      if      ( y <= ( dead_edge_width_+    pitch_simY_ ) ) column = 0;
+-      else if ( y <= ( dead_edge_width_+ 51*pitch_simY_ ) ) column = int( ( y-dead_edge_width_-pitch_simY_ )/pitch_simY_ )+1;
+-      else if ( y <= ( dead_edge_width_+ 53*pitch_simY_ ) ) column = 51;
+-      else if ( y <= ( dead_edge_width_+ 55*pitch_simY_ ) ) column = 52;
+-      else if ( y <= ( dead_edge_width_+105*pitch_simY_ ) ) column = int( ( y-dead_edge_width_-pitch_simY_ )/pitch_simY_ )-1;
+-      else if ( y <= ( dead_edge_width_+107*pitch_simY_ ) ) column = 103;
+-      else if ( y <= ( dead_edge_width_+109*pitch_simY_ ) ) column = 104;
+-      else if ( y <= ( dead_edge_width_+159*pitch_simY_ ) ) column = int( ( y-dead_edge_width_-pitch_simY_ )/pitch_simY_ )-3;
+-      else column = 155;
+-
+-      return column;
++    if(acol == 0) {
++      lower_y = 0;
++      higher_y = 0.35;
++    }
++    if( acol > 0 && acol <= 50 ){
++      lower_y = 0.35 + (acol-1)*pitch_simY_;
++      higher_y = 0.35 + acol*pitch_simY_;
++    } 
++    if(acol == 51) {
++      lower_y = 0.35 + (acol-1)*pitch_simY_;
++      higher_y = 0.35 + (acol+1)*pitch_simY_;
++    }
++    if(acol == 52) {
++      lower_y = 0.35 + (acol)*pitch_simY_;
++      higher_y = 0.35 + (acol+2)*pitch_simY_;
++    }
++    if( acol > 52 && acol <= 102 ){
++      lower_y = 0.35 + (acol+1)*pitch_simY_;
++      higher_y = 0.35 + (acol+2)*pitch_simY_;
++    } 
++
++    if(acol == 103) {
++      lower_y = 0.35 + (acol+1)*pitch_simY_;
++      higher_y = 0.35 + (acol+3)*pitch_simY_;
++    }
++    if(acol == 104) {
++      lower_y = 0.35 + (acol+2)*pitch_simY_;
++      higher_y = 0.35 + (acol+4)*pitch_simY_;
+     }
++    if( acol > 104 && acol <= 154 ){
++      lower_y = 0.35 + (acol+3)*pitch_simY_;
++      higher_y = 0.35 + (acol+4)*pitch_simY_;
++    } 
++    if(acol == 155) {
++      lower_y = 0.35 + (acol+3)*pitch_simY_;
++      higher_y = 0.35 + (acol+4)*pitch_simY_ + 0.2;
++    }
++ 
++    lower_x = lower_x - simX_width_/2.;
++    lower_y = lower_y - simY_width_/2.;
++    higher_x = higher_x - simX_width_/2.;
++    higher_y = higher_y - simY_width_/2.;
++
++  }
++
++private:
++  std::vector<pixel_info> theRelevantPixels_;
++
++  double active_edge_x_;
++  double active_edge_y_;
++    
++  inline double activeEdgeFactor(double x, double y)
++  {
++    double topEdgeFactor=TMath::Erf(-distanceFromTopActiveEdge(x, y)/active_edge_sigma_)/2 + 0.5;
++    double bottomEdgeFactor=TMath::Erf(-distanceFromBottomActiveEdge(x, y)/active_edge_sigma_)/2 + 0.5;
++    double rightEdgeFactor=TMath::Erf(-distanceFromRightActiveEdge(x, y)/active_edge_sigma_)/2 + 0.5;
++    double leftEdgeFactor=TMath::Erf(-distanceFromLeftActiveEdge(x, y)/active_edge_sigma_)/2 + 0.5;
++
++    double aEF = topEdgeFactor*bottomEdgeFactor*rightEdgeFactor*leftEdgeFactor;
+ 
+-    inline void rowCol2Index( unsigned int arow, unsigned int acol, unsigned int& index ) const {
+-      index = acol*no_of_pixels_simX_+arow;
++    if(aEF>1)
++      throw cms::Exception("CTPPSPixelSimTopology")<< " active edge factor > 1";
++
++    return aEF;
++  }
++     
++  inline double distanceFromTopActiveEdge(double x, double y)
++  {
++    double d=y-active_edge_y_;
++    return d;
++  }
++
++  inline double distanceFromBottomActiveEdge(double x, double y)
++  {
++    double d=-y-active_edge_y_;
++    return d;
++  }
++
++  inline double distanceFromRightActiveEdge(double x, double y)
++  {
++    double d=x-active_edge_x_;
++    return d;
++  }
++
++  inline double distanceFromLeftActiveEdge(double x, double y)
++  {
++    double d=-x-active_edge_x_;
++    return d;
++  }
++
++  inline unsigned int row(double x){
++// x in the G4 simulation system
++
++    x = x + simX_width_/2.;
++ 
++// now x in the system centered in the bottom left corner of the sensor (sensor view, rocs behind)
++    if(!(x>=0 && x<=simX_width_))
++      throw cms::Exception("CTPPSPixelSimTopology")<< " out of reference frame";
++    unsigned int arow;
++// rows (x segmentation)
++
++    if(x <= (dead_edge_width_+pitch_simX_) ) arow = 0;
++
++    if(x > (dead_edge_width_+pitch_simX_) && x <= (dead_edge_width_+79*pitch_simX_)   ){
++      arow = int((x - dead_edge_width_-pitch_simX_)/pitch_simX_)+1 ;
++    }      
++
++    if(x >  (dead_edge_width_+79*pitch_simX_) &&  x<= (dead_edge_width_+81*pitch_simX_)) arow = 79;
++
++    if(x >  (dead_edge_width_+81*pitch_simX_) &&  x<= (dead_edge_width_+83*pitch_simX_)) arow = 80;
++
++    if(x > (dead_edge_width_+83*pitch_simX_) && x <= (dead_edge_width_+162*pitch_simX_)   ){
++      arow = int((x - dead_edge_width_-pitch_simX_)/pitch_simX_)-1;
++    }      
++    if(x > (dead_edge_width_+162*pitch_simX_) ) arow = 159;
++
++    arow=159-arow;
++    if(arow>159)
++      throw cms::Exception("CTPPSPixelSimTopology")<< " row number exceeding limit";
++ 
++    return arow;
++  }
++
++  inline unsigned int col(double y){
++    unsigned int column;
++// y in the G4 simulation system
++
++// columns (y segmentation)
++// now y in the system centered in the bottom left corner of the sensor (sensor view, rocs behind)
++    y = y + simY_width_/2.;
++    if(!(y>=0 && y <=simY_width_))
++      throw cms::Exception("CTPPSPixelSimTopology")<< " out of reference frame";
++
++    if(y <= (dead_edge_width_+pitch_simY_) ) column = 0;
++
++    if(y > (dead_edge_width_+pitch_simY_) && y <= (dead_edge_width_+51*pitch_simY_)   ){
++      column = int((y - dead_edge_width_-pitch_simY_)/pitch_simY_)+1 ;
++    }      
++
++    if(y >  (dead_edge_width_+51*pitch_simY_) &&  y<= (dead_edge_width_+53*pitch_simY_)) column = 51;
++
++    if(y >  (dead_edge_width_+53*pitch_simY_) &&  y<= (dead_edge_width_+55 *pitch_simY_)) column = 52;
++
++    if(y >  (dead_edge_width_+55*pitch_simY_) &&  y<= (dead_edge_width_+105 *pitch_simY_)) {
++      column = int((y - dead_edge_width_-pitch_simY_)/pitch_simY_)-1 ;
+     }
+ 
+-    inline void index2RowCol( unsigned int& arow, unsigned int& acol, unsigned int index ) const {
+-      acol = index / no_of_pixels_simX_;
+-      arow = index % no_of_pixels_simX_;
++
++    if(y >  (dead_edge_width_+105*pitch_simY_) &&  y<= (dead_edge_width_+107*pitch_simY_)) column = 103;
++
++    if(y >  (dead_edge_width_+107*pitch_simY_) &&  y<= (dead_edge_width_+109 *pitch_simY_)) column = 104;
++
++    if(y >  (dead_edge_width_+109*pitch_simY_) &&  y<= (dead_edge_width_+159 *pitch_simY_)) {
++      column = int((y - dead_edge_width_-pitch_simY_)/pitch_simY_)-3 ;
+     }
++
++    if(y >  (dead_edge_width_+159*pitch_simY_) ) column = 155;
++
++    return column;
++  }
++
++  inline void rowCol2Index(unsigned int arow, unsigned int acol, unsigned int &index){
++    index = acol*no_of_pixels_simX_+arow;
++  }
++
++  inline void index2RowCol(unsigned int &arow, unsigned int &acol, unsigned int index){
++    acol = index / no_of_pixels_simX_ ;
++    arow = index % no_of_pixels_simX_;
++  }
++
+ };
+ 
+ #endif
+diff --git a/Geometry/VeryForwardGeometry/interface/CTPPSPixelTopology.h b/Geometry/VeryForwardGeometry/interface/CTPPSPixelTopology.h
+index 60f9f11..66ee79c 100644
+--- a/Geometry/VeryForwardGeometry/interface/CTPPSPixelTopology.h
++++ b/Geometry/VeryForwardGeometry/interface/CTPPSPixelTopology.h
+@@ -1,13 +1,13 @@
+-#ifndef Geometry_VeryForwardGeometry_CTPPSPixelTopology_h
+-#define Geometry_VeryForwardGeometry_CTPPSPixelTopology_h
++#ifndef Geometry_VeryForwardGeometry_CTPPSPixelTopology_H
++#define Geometry_VeryForwardGeometry_CTPPSPixelTopology_H
+ 
+ #include "TMath.h"
+ #include "CondFormats/CTPPSReadoutObjects/interface/CTPPSPixelIndices.h"
+-
+ /**
+  *\brief Geometrical and topological information on RPix silicon detector.
+  * Uses coordinate a frame with origin in the center of the wafer.
+  **/
++
+ class CTPPSPixelTopology
+ {
+   public:
+@@ -17,28 +17,28 @@ class CTPPSPixelTopology
+     static constexpr double pitch_simY_ = 150E-3;
+     static constexpr double pitch_simX_ = 100E-3;
+     static constexpr double thickness_ = 0.23;
+-    static constexpr unsigned short no_of_pixels_simX_ = 160;
+-    static constexpr unsigned short no_of_pixels_simY_ = 156;
+-    static constexpr unsigned short no_of_pixels_ = 160*156;
++    static constexpr unsigned short no_of_pixels_simX_ = 160;  
++    static constexpr unsigned short no_of_pixels_simY_ = 156;  
++    static constexpr unsigned short no_of_pixels_ = 160*156;  
+     static constexpr double simX_width_ = 16.6;
+     static constexpr double simY_width_ = 24.4;
+     static constexpr double dead_edge_width_ = 200E-3;
+     static constexpr double active_edge_sigma_ = 0.02;
+     static constexpr double phys_active_edge_dist_ = 0.150;
+ 
+-    inline double detPitchSimX() const { return pitch_simX_; }
+-    inline double detPitchSimY() const { return pitch_simY_; }
+-    inline double detThickness() const { return thickness_; }
+-    inline unsigned short detPixelSimXNo() const { return no_of_pixels_simX_; }
+-    inline unsigned short detPixelSimYNo() const { return no_of_pixels_simY_; }
+-    inline unsigned short detPixelNo() const { return no_of_pixels_; }
+-    inline double detXWidth() const { return simX_width_; }
+-    inline double detYWidth() const { return simY_width_; }
+-    inline double detDeadEdgeWidth() const { return dead_edge_width_; }
+-    inline double activeEdgeSigma() const { return active_edge_sigma_; }
+-    inline double physActiveEdgeDist() const { return phys_active_edge_dist_; }
++    inline double detPitchSimX() const {return pitch_simX_;}
++    inline double detPitchSimY() const {return pitch_simY_;}
++    inline double detThickness() const {return thickness_;}
++    inline unsigned short detPixelSimXNo() const {return no_of_pixels_simX_;}
++    inline unsigned short detPixelSimYNo() const {return no_of_pixels_simY_;}
++    inline unsigned short detPixelNo() const {return no_of_pixels_;}
++    inline double detXWidth() const {return simX_width_;}
++    inline double detYWidth() const {return simY_width_;}
++    inline double detDeadEdgeWidth() const {return dead_edge_width_;}
++    inline double activeEdgeSigma() const {return active_edge_sigma_;}
++    inline double physActiveEdgeDist() const {return phys_active_edge_dist_;}
+ 
+-    CTPPSPixelIndices indices_;
++    CTPPSPixelIndices indici_;    
+ };
+ 
+ #endif 
+diff --git a/Geometry/VeryForwardGeometry/src/CTPPSPixelSimTopology.cc b/Geometry/VeryForwardGeometry/src/CTPPSPixelSimTopology.cc
+index ea67c92..31c47c5 100644
+--- a/Geometry/VeryForwardGeometry/src/CTPPSPixelSimTopology.cc
++++ b/Geometry/VeryForwardGeometry/src/CTPPSPixelSimTopology.cc
+@@ -2,25 +2,28 @@
+ 
+ CTPPSPixelSimTopology::CTPPSPixelSimTopology()
+ {
+-  active_edge_x_ = simX_width_*0.5 - phys_active_edge_dist_;
+-  active_edge_y_ = simY_width_*0.5 - phys_active_edge_dist_;
++  active_edge_x_ = simX_width_/2.0 - phys_active_edge_dist_;
++  active_edge_y_ = simY_width_/2.0 - phys_active_edge_dist_;
+ }
+ 
+-CTPPSPixelSimTopology::PixelInfo
+-CTPPSPixelSimTopology::getPixelsInvolved( double x, double y, double sigma, double& hit_pos_x, double& hit_pos_y ) const
++std::vector<pixel_info> CTPPSPixelSimTopology::getPixelsInvolved(double x, double y, double sigma, double &hit_pos_x, double &hit_pos_y)
+ {
+-  //hit position wrt the bottom left corner of the sensor (-8.3, -12.2) in sensor view, rocs behind
++  theRelevantPixels_.clear();
++//hit position wrt the bottom left corner of the sensor (-8.3, -12.2) in sensor view, rocs behind
++
+   hit_pos_x = x + simX_width_/2.;
+   hit_pos_y = y + simY_width_/2.;
+-  if( !( hit_pos_x*hit_pos_y > 0 ) )
+-    throw cms::Exception("CTPPSPixelSimTopology") << "out of reference frame";
++  if(!(hit_pos_x*hit_pos_y > 0))
++    throw cms::Exception("CTPPSPixelSimTopology")<< " out of refrence frame";
+ 
+-  double hit_factor = activeEdgeFactor( x, y );
++  double hit_factor = activeEdgeFactor(x, y);
+ 
+-  unsigned int interested_row = row( x );
+-  unsigned int interested_col = col( y );
++  unsigned int interested_row = row(x);
++  unsigned int interested_col = col(y);
+   double low_pixel_range_x, high_pixel_range_x, low_pixel_range_y, high_pixel_range_y;
+-  pixelRange( interested_row, interested_col, low_pixel_range_x, high_pixel_range_x, low_pixel_range_y, high_pixel_range_y );
++  pixelRange(interested_row, interested_col, low_pixel_range_x, high_pixel_range_x, low_pixel_range_y, high_pixel_range_y);
++
++  theRelevantPixels_.push_back(pixel_info( low_pixel_range_x, high_pixel_range_x, low_pixel_range_y, high_pixel_range_y, hit_factor, interested_row, interested_col));
+ 
+-  return CTPPSPixelSimTopology::PixelInfo( low_pixel_range_x, high_pixel_range_x, low_pixel_range_y, high_pixel_range_y, hit_factor, interested_row, interested_col );
++  return theRelevantPixels_;
+ }
+diff --git a/SimG4Core/Application/plugins/OscarMTProducer.cc b/SimG4Core/Application/plugins/OscarMTProducer.cc
+index b79a7cb..55ce77c 100644
+--- a/SimG4Core/Application/plugins/OscarMTProducer.cc
++++ b/SimG4Core/Application/plugins/OscarMTProducer.cc
+@@ -86,6 +86,9 @@ OscarMTProducer::OscarMTProducer(edm::ParameterSet const & p, const OscarMTMaste
+   produces<edm::PSimHitContainer>("TotemHitsT1");
+   produces<edm::PSimHitContainer>("TotemHitsT2Gem");
+   produces<edm::PSimHitContainer>("TotemHitsRP");
++  produces<edm::PSimHitContainer>("CTPPSPixelHits");
++// produces<edm::PSimHitContainer>("CTPPSDiamondHits");
++  produces<edm::PSimHitContainer>("CTPPSTimingHits");
+   produces<edm::PSimHitContainer>("FP420SI");
+   produces<edm::PSimHitContainer>("BSCHits");
+   produces<edm::PSimHitContainer>("PLTHits");
+diff --git a/SimG4Core/Application/plugins/OscarProducer.cc b/SimG4Core/Application/plugins/OscarProducer.cc
+index 460f6ef..24702a1 100644
+--- a/SimG4Core/Application/plugins/OscarProducer.cc
++++ b/SimG4Core/Application/plugins/OscarProducer.cc
+@@ -88,6 +88,9 @@ OscarProducer::OscarProducer(edm::ParameterSet const & p)
+   produces<edm::PSimHitContainer>("TotemHitsT1");
+   produces<edm::PSimHitContainer>("TotemHitsT2Gem");
+   produces<edm::PSimHitContainer>("TotemHitsRP");
++  produces<edm::PSimHitContainer>("CTPPSPixelHits");
++  //produces<edm::PSimHitContainer>("CTPPSDiamondHits");
++  produces<edm::PSimHitContainer>("CTPPSTimingHits");
+   produces<edm::PSimHitContainer>("FP420SI");
+   produces<edm::PSimHitContainer>("BSCHits");
+   produces<edm::PSimHitContainer>("PLTHits");
+diff --git a/SimG4Core/Application/python/g4SimHits_cfi.py b/SimG4Core/Application/python/g4SimHits_cfi.py
+index 8e6d0c3..893c0ca 100644
+--- a/SimG4Core/Application/python/g4SimHits_cfi.py
++++ b/SimG4Core/Application/python/g4SimHits_cfi.py
+@@ -421,9 +421,6 @@ g4SimHits = cms.EDProducer("OscarMTProducer",
+         MouseBite        = cms.untracked.double(2.5),
+         CheckID          = cms.untracked.bool(True),
+     ),
+-    TotemSD = cms.PSet(
+-        Verbosity = cms.untracked.int32(0)
+-    ),
+     ZdcSD = cms.PSet(
+         Verbosity = cms.int32(0),
+         UseShowerLibrary = cms.bool(True),
+@@ -482,6 +479,16 @@ g4SimHits = cms.EDProducer("OscarMTProducer",
+         TimeSliceUnit   = cms.double(1),
+         IgnoreTrackID   = cms.bool(False),
+     ),
++    Totem_RP_SD = cms.PSet(
++        Verbosity = cms.int32(0)
++    ),
++    CTPPS_Diamond_SD = cms.PSet(
++        Verbosity = cms.int32(0)
++    ),
++    CTPPSSD = cms.PSet(
++        Verbosity = cms.untracked.int32(0)
++    ),
++
+ )
+ 
+ 
+diff --git a/SimGeneral/MixingModule/python/mixObjects_cfi.py b/SimGeneral/MixingModule/python/mixObjects_cfi.py
+index 22b29ec..7668d86 100644
+--- a/SimGeneral/MixingModule/python/mixObjects_cfi.py
++++ b/SimGeneral/MixingModule/python/mixObjects_cfi.py
+@@ -255,3 +255,17 @@ phase2_timing_layer.toModify( theMixObjects,
+         crossingFrames = theMixObjects.mixSH.crossingFrames + [ 'FastTimerHitsBarrel','FastTimerHitsEndcap' ]
+     )
+ )
++
++from Configuration.Eras.Modifier_ctpps_2016_cff import ctpps_2016
++ctpps_2016.toModify( theMixObjects, 
++    mixSH = dict(
++        input = theMixObjects.mixSH.input + [ cms.InputTag("g4SimHits","TotemHitsRP"),cms.InputTag("g4SimHits","CTPPSPixelHits") ],
++        subdets = theMixObjects.mixSH.subdets + [ 'TotemHitsRP', 'CTPPSPixelHits' ],
++        crossingFrames = theMixObjects.mixSH.crossingFrames + [ 'TotemHitsRP' , 'CTPPSPixelHits']
++    )   
++)
++
++        
++
++
++
+diff --git a/SimTransport/HectorProducer/BuildFile.xml b/SimTransport/HectorProducer/BuildFile.xml
+index 29b2edd..eb11265 100644
+--- a/SimTransport/HectorProducer/BuildFile.xml
++++ b/SimTransport/HectorProducer/BuildFile.xml
+@@ -3,9 +3,9 @@
+ <use   name="SimDataFormats/GeneratorProducts"/>
+ <use   name="SimDataFormats/Forward"/>
+ <use   name="SimGeneral/HepPDTRecord"/>
+-<use   name="IOMC/RandomEngine"/>
++<use   name="CTPPSTools/Utilities"/>
+ <use   name="hector"/>
+ <use   name="hepmc"/>
+ <use   name="clhep"/>
+ <use   name="root"/>
+-<flags   EDM_PLUGIN="1"/>
++<flags EDM_PLUGIN="1"/>
+diff --git a/SimTransport/HectorProducer/interface/CTPPSHector.h b/SimTransport/HectorProducer/interface/CTPPSHector.h
+index 8c19c3d..0d0a8d0 100644
+--- a/SimTransport/HectorProducer/interface/CTPPSHector.h
++++ b/SimTransport/HectorProducer/interface/CTPPSHector.h
+@@ -25,7 +25,8 @@
+ #include <string>
+ #include <map>
+ #include <cmath>
+-#include <cmath>
++#include <math.h>
++#include <tuple>
+ 
+ #include "SimTransport/HectorProducer/interface/CTPPSHectorParameters.h"
+ 
+@@ -33,6 +34,8 @@
+ #include "FWCore/Utilities/interface/Exception.h"
+ #include "FWCore/Utilities/interface/RandomNumberGenerator.h"
+ #include <CLHEP/Vector/LorentzVector.h>
++#include <CLHEP/Vector/Boost.h>
++
+ 
+ class TRandom3;
+ 
+@@ -56,8 +59,6 @@ class CTPPSHector {
+         void filterCTPPS(TRandom3*);
+ 
+         // New function to calculate the LorentzBoost 
+-        void LorentzBoost(LorentzVector& p_out, const string& frame);
+-
+         void set_BeamEnergy(double e) {fBeamEnergy=e;fBeamMomentum = sqrt(fBeamEnergy*fBeamEnergy - ProtonMassSQ);};
+ 
+         double get_BeamEnergy() {return fBeamEnergy;};
+@@ -75,6 +76,7 @@ class CTPPSHector {
+ 
+         std::vector<LHCTransportLink> & getCorrespondenceMap() { return theCorrespondenceMap; }
+ 
++        bool SetBeamLine();
+     private:
+         // Defaults
+         double lengthctpps ;
+@@ -85,18 +87,23 @@ class CTPPSHector {
+         bool m_smearE;
+         double m_sigmaSTX;
+         double m_sigmaSTY;
++        double m_sigmaSX;
++        double m_sigmaSY;
+         float m_f_ctpps_f;
+         float m_b_ctpps_b;     
+ 
+         //HECTOR CTPPS Parameters
+         bool fCrossAngleCorr;
+-        double fCrossingAngle;
++        double fCrossingAngleBeam1;
++        double fCrossingAngleBeam2;
+         double fBeamMomentum;
+         double fBeamEnergy;
+         double fVtxMeanX;
+         double fVtxMeanY;
+         double fVtxMeanZ;
+         double fMomentumMin;
++        double fBeamXatIP;
++        double fBeamYatIP;
+ 
+         edm::ESHandle < ParticleDataTable > pdt;
+ 
+diff --git a/SimTransport/HectorProducer/interface/CTPPSHectorParameters.h b/SimTransport/HectorProducer/interface/CTPPSHectorParameters.h
+index e1cd208..95359c5 100644
+--- a/SimTransport/HectorProducer/interface/CTPPSHectorParameters.h
++++ b/SimTransport/HectorProducer/interface/CTPPSHectorParameters.h
+@@ -1,6 +1,6 @@
+ #ifndef CTPPSHectorParameters_H
+ #define CTPPSHectorParameters_H
+-#include <cmath>
++#include <math.h>
+ 
+ const double   ProtonMass = 0.93827;
+ const double   ProtonMassSQ = pow(ProtonMass,2);
+diff --git a/SimTransport/HectorProducer/interface/CTPPSHectorProducer.h b/SimTransport/HectorProducer/interface/CTPPSHectorProducer.h
+index 104cd55..4f8a28b 100644
+--- a/SimTransport/HectorProducer/interface/CTPPSHectorProducer.h
++++ b/SimTransport/HectorProducer/interface/CTPPSHectorProducer.h
+@@ -30,10 +30,10 @@ class CTPPSHectorProducer : public edm::one::EDProducer<edm::one::SharedResource
+ {
+     public:
+         explicit CTPPSHectorProducer(edm::ParameterSet const & p);    //!< default constructor
+-        ~CTPPSHectorProducer() override;   //!< default destructor
+-        void beginRun(const edm::Run & r,const edm::EventSetup& c) override;
+-        void endRun(const edm::Run & r,const edm::EventSetup& c) override;
+-        void produce(edm::Event & e, const edm::EventSetup & c)  override;
++        virtual ~CTPPSHectorProducer();   //!< default destructor
++        virtual void beginRun(const edm::Run & r,const edm::EventSetup& c) override;
++        virtual void endRun(const edm::Run & r,const edm::EventSetup& c) override;
++        virtual void produce(edm::Event & e, const edm::EventSetup & c)  override;
+     private:
+         //HepMC::GenEvent * evt_;
+         CTPPSHector * hector_ctpps;
+diff --git a/SimTransport/HectorProducer/interface/HectorProducer.h b/SimTransport/HectorProducer/interface/HectorProducer.h
+index afdc6fb..0bb3895 100644
+--- a/SimTransport/HectorProducer/interface/HectorProducer.h
++++ b/SimTransport/HectorProducer/interface/HectorProducer.h
+@@ -28,10 +28,10 @@ class HectorProducer : public edm::one::EDProducer<edm::one::SharedResources, ed
+ {
+  public:
+   explicit HectorProducer(edm::ParameterSet const & p);  
+-  ~HectorProducer() override;  
+-  void beginRun(const edm::Run & r,const edm::EventSetup& c) override;
+-  void endRun(const edm::Run & r,const edm::EventSetup& c) override;
+-  void produce(edm::Event & e, const edm::EventSetup& c) override;
++  virtual ~HectorProducer();  
++  virtual void beginRun(const edm::Run & r,const edm::EventSetup& c) override;
++  virtual void endRun(const edm::Run & r,const edm::EventSetup& c) override;
++  virtual void produce(edm::Event & e, const edm::EventSetup& c) override;
+ 
+  private:
+ 
+diff --git a/SimTransport/HectorProducer/python/FastSimWithCTPPS_cff.py b/SimTransport/HectorProducer/python/FastSimWithCTPPS_cff.py
+index ee742e7..2ae9291 100644
+--- a/SimTransport/HectorProducer/python/FastSimWithCTPPS_cff.py
++++ b/SimTransport/HectorProducer/python/FastSimWithCTPPS_cff.py
+@@ -39,11 +39,10 @@ def customise(process):
+        # output
+        outputModule = None
+        outdict = process.outputModules_()
+-       if "AODSIMoutput" in outdict:
+-           process.AODSIMoutput.outputCommands.extend(cms.untracked.vstring('keep *_CTPPSSimHits_*_*','keep *_CTPPSFastRecHits_*_*'
+-,'keep *_CTPPSFastTracks_*_*'))
++       if outdict.has_key("AODSIMoutput"):
++           process.AODSIMoutput.outputCommands.extend(cms.untracked.vstring('keep *_CTPPSSimHits_*_*','keep *_CTPPSFastRecHits_*_*','keep *_CTPPSFastTracks_*_*'))
+            process.reconstruction_step.replace(process.reconstruction,process.reconstruction*process.CTPPSFastRecHits*process.CTPPSFastTracks)         
+-       elif "FASTPUoutput" in outdict:
++       elif outdict.has_key("FASTPUoutput"):
+            process.FASTPUoutput.outputCommands.extend(cms.untracked.vstring('keep *_CTPPSSimHits_*_*'))        
+                        
+        
+diff --git a/SimTransport/HectorProducer/python/HectorTransportCTPPS_cfi.py b/SimTransport/HectorProducer/python/HectorTransportCTPPS_cfi.py
+index b8a07bc..9f9a9be 100644
+--- a/SimTransport/HectorProducer/python/HectorTransportCTPPS_cfi.py
++++ b/SimTransport/HectorProducer/python/HectorTransportCTPPS_cfi.py
+@@ -1,31 +1,22 @@
+ import FWCore.ParameterSet.Config as cms
+ 
+ from SimG4Core.Application.hectorParameter_cfi import *
++
++from SimTransport.HectorProducer.CTPPSOpticsParameters_cfi import *
++
+ LHCTransport = cms.EDProducer("CTPPSHectorProducer",
+     HepMCProductLabel = cms.string('generatorSmeared'),  ## HepMC source to be processed
+     CTPPSTransport = cms.bool(True), 
+     Verbosity = cms.bool(False),
+     CTPPSHector = cms.PSet(
+         HectorEtaCut,
+-        Beam1 = cms.string('SimTransport/HectorProducer/data/LHCB1_Beta0.60_6.5TeV_CR142.5_v6.503.tfs'),
+-        Beam2 = cms.string('SimTransport/HectorProducer/data/LHCB2_Beta0.60_6.5TeV_CR142.5_v6.503.tfs'),
+-        CrossingAngle  = cms.double(142.5), #in mrad
++        Validated_PreTS2_2016,
+         BeamLineLengthCTPPS = cms.double(250.0),
+-           CTPPSf = cms.double(203.827),    ##in meters
+-        CTPPSb = cms.double(203.827),    ##in meters
++        CTPPSf = cms.double(212.55),    ##in meters
++        CTPPSb = cms.double(212.55),    ##in meters
+         smearEnergy = cms.bool(True),       ## if False: no Energy smearing(i.e. sigmaEnergy =0.0)
+-        sigmaEnergy = cms.double(1.11e-4),     ## beam energy dispersion (GeV); if =0.0 the default(=0.79) is used
+         smearAng = cms.bool(True),       ## if False: no Angle smearing(i.e. sigmaSTX(Y) =0.0)
+-        sigmaSTX = cms.double(30.03),     ## x angle dispersion at IP (urad); if =0.0 the default(=30.23) is used
+-        sigmaSTY = cms.double(30.03),      ## y angle dispersion at IP (urad); if =0.0 the default(=30.23) is used
+         CrossAngleCorr = cms.bool(True),
+-        BeamEnergy = cms.double(6500.0),
+-        VtxMeanX       = cms.double(0.10482),
+-        VtxMeanY       = cms.double(0.16867),
+-        VtxMeanZ       = cms.double(-1.0985),
+-        MomentumMin = cms.double(3.000)                
++        MomentumMin = cms.double(3.000),       
+     )
+ )
+-
+-
+-
+diff --git a/SimTransport/HectorProducer/python/HectorTransport_cfi.py b/SimTransport/HectorProducer/python/HectorTransport_cfi.py
+index bc85c3e..dcb68b3 100644
+--- a/SimTransport/HectorProducer/python/HectorTransport_cfi.py
++++ b/SimTransport/HectorProducer/python/HectorTransport_cfi.py
+@@ -19,7 +19,9 @@ LHCTransport = cms.EDProducer("HectorProducer",
+         sigmaEnergy = cms.double(0.0),     ## beam energy dispersion (GeV); if =0.0 the default(=0.79) is used
+         smearAng = cms.bool(True),       ## if False: no Angle smearing(i.e. sigmaSTX(Y) =0.0)
+         sigmaSTX = cms.double(0.0),     ## x angle dispersion at IP (urad); if =0.0 the default(=30.23) is used
+-        sigmaSTY = cms.double(0.0)      ## y angle dispersion at IP (urad); if =0.0 the default(=30.23) is used
++        sigmaSTY = cms.double(0.0),      ## y angle dispersion at IP (urad); if =0.0 the default(=30.23) is used
++        sigmaSX = cms.double(12.01),     ## x dispersion at IP (um); sqrt(emittance*beta_x*)
++        sigmaSY = cms.double(12.01)      ## y dispersion at IP (um); 
+     )
+ )
+ 
+diff --git a/SimTransport/HectorProducer/src/CTPPSHector.cc b/SimTransport/HectorProducer/src/CTPPSHector.cc
+index 4d35513..d781b78 100644
+--- a/SimTransport/HectorProducer/src/CTPPSHector.cc
++++ b/SimTransport/HectorProducer/src/CTPPSHector.cc
+@@ -9,17 +9,22 @@
+ #include "HepMC/SimpleVector.h"
+ 
+ #include "CLHEP/Random/RandGauss.h"
++#include "CTPPSTools/Utilities/interface/CTPPSUtilities.h"
+ 
+ #include "TRandom3.h"
+-#include <TMatrixD.h>
++#include <TMath.h>
+ 
+ #include "H_Parameters.h"
++#include "H_RecRPObject.h"
++
++#include <math.h>
++#include <iomanip>
++#include <cstdlib>
+ 
+-#include <cmath>
+ 
+ CTPPSHector::CTPPSHector(const edm::ParameterSet & param, bool verbosity,bool CTPPSTransport) : 
+-    m_smearAng(false),m_sig_e(0.),m_smearE(false),m_sigmaSTX(0.),m_sigmaSTY(0.),
+-    fCrossAngleCorr(false),fCrossingAngle(0.),fBeamMomentum(0),fBeamEnergy(0),
++    m_smearAng(false),m_sig_e(0.),m_smearE(false),m_sigmaSTX(0.),m_sigmaSTY(0.),m_sigmaSX(0.),m_sigmaSY(0.),
++    fCrossAngleCorr(false),fCrossingAngleBeam1(0.),fCrossingAngleBeam2(0.),fBeamMomentum(0),fBeamEnergy(0),
+     fVtxMeanX(0.),fVtxMeanY(0.),fVtxMeanZ(0.),fMomentumMin(0.),
+     m_verbosity(verbosity), 
+     m_CTPPSTransport(CTPPSTransport),NEvent(0)
+@@ -38,60 +43,34 @@ CTPPSHector::CTPPSHector(const edm::ParameterSet & param, bool verbosity,bool CT
+     m_smearAng      = hector_par.getParameter<bool>("smearAng");
+     m_sigmaSTX      = hector_par.getParameter<double>("sigmaSTX" );
+     m_sigmaSTY      = hector_par.getParameter<double>("sigmaSTY" );
++    m_sigmaSX       = hector_par.getParameter<double>("sigmaSX");
++    m_sigmaSY       = hector_par.getParameter<double>("sigmaSY");
+     m_smearE        = hector_par.getParameter<bool>("smearEnergy");
+     m_sig_e         = hector_par.getParameter<double>("sigmaEnergy");
+     etacut          = hector_par.getParameter<double>("EtaCutForHector" );
+     //CTPPS
+     fCrossAngleCorr = hector_par.getParameter<bool>("CrossAngleCorr");
+-    fCrossingAngle  = hector_par.getParameter<double>("CrossingAngle");
++    fCrossingAngleBeam1  = hector_par.getParameter<double>("CrossingAngleBeam1");
++    fCrossingAngleBeam2  = hector_par.getParameter<double>("CrossingAngleBeam2");
+     fBeamEnergy     = hector_par.getParameter<double>("BeamEnergy"); // beam energy in GeV
+     fVtxMeanX       = hector_par.getParameter<double>("VtxMeanX");
+     fVtxMeanY       = hector_par.getParameter<double>("VtxMeanY");
+     fVtxMeanZ       = hector_par.getParameter<double>("VtxMeanZ");
+     fMomentumMin    = hector_par.getParameter<double>("MomentumMin"); 
++    fBeamXatIP      = hector_par.getParameter<double>("BeamXatIP"); // position in mm
++    fBeamYatIP      = hector_par.getParameter<double>("BeamYatIP"); // position in mm
+ 
+-    theCorrespondenceMap.clear();
++    fBeamMomentum = sqrt(fBeamEnergy*fBeamEnergy - ProtonMassSQ);
+ 
+-    if(m_verbosity) {
+-        edm::LogInfo("CTPPSHectorSetup") << "===================================================================\n"  
+-            << " * * * * * * * * * * * * * * * * * * * * * * * * * * * *           \n"  
+-            << " *                                                         *       \n"  
+-            << " *                   --<--<--  A fast simulator --<--<--     *     \n"  
+-            << " *                 | --<--<--     of particle   --<--<--     *     \n"  
+-            << " *  ----HECTOR----<                                          *     \n"  
+-            << " *                 | -->-->-- transport through-->-->--      *     \n"   
+-            << " *                   -->-->-- generic beamlines -->-->--     *     \n"  
+-            << " *                                                           *     \n"   
+-            << " * JINST 2:P09005 (2007)                                     *     \n"  
+-            << " *      X Rouby, J de Favereau, K Piotrzkowski (CP3)         *     \n"  
+-            << " *       http://www.fynu.ucl.ac.be/hector.html               *     \n"  
+-            << " *                                                           *     \n"  
+-            << " * Center for Cosmology, Particle Physics and Phenomenology  *     \n"  
+-            << " *              Universite catholique de Louvain             *     \n"  
+-            << " *                 Louvain-la-Neuve, Belgium                 *     \n"  
+-            << " *                                                         *       \n"  
+-            << " * * * * * * * * * * * * * * * * * * * * * * * * * * * *           \n"   
+-            << " CTPPSHector configuration: \n" 
+-            << " m_CTPPSTransport   = " << m_CTPPSTransport << "\n"
+-            << " lengthctpps      = " << lengthctpps << "\n"
+-            << " m_f_ctpps_f      =  " << m_f_ctpps_f << "\n"
+-            << " m_b_ctpps_b      =  " << m_b_ctpps_b << "\n"
+-            << "===================================================================\n";
+-    }  
+-    edm::FileInPath b1(beam1filename.c_str());
+-    edm::FileInPath b2(beam2filename.c_str());
++    theCorrespondenceMap.clear();
++    
++    CTPPSTools::fBeamMomentum=fBeamMomentum;
++    CTPPSTools::fBeamEnergy=fBeamEnergy;
++    CTPPSTools::fCrossingAngleBeam1=-fCrossingAngleBeam1;
++    CTPPSTools::fCrossingAngleBeam2=-fCrossingAngleBeam2;
+ 
+     // construct beam line for CTPPS (forward 1 backward 2):                                                                                           
+-    if(m_CTPPSTransport && lengthctpps>0. ) {
+-        m_beamlineCTPPS1 = std::unique_ptr<H_BeamLine>(new H_BeamLine( -1, lengthctpps + 0.1 )); // (direction, length)
+-        m_beamlineCTPPS2 = std::unique_ptr<H_BeamLine>(new H_BeamLine( 1, lengthctpps + 0.1 )); //
+-        m_beamlineCTPPS1->fill( b2.fullPath(), 1, "IP5" );
+-        m_beamlineCTPPS2->fill( b1.fullPath(), 1, "IP5" );
+-        m_beamlineCTPPS1->offsetElements( 120, 0.097 );
+-        m_beamlineCTPPS2->offsetElements( 120, 0.097 );
+-        m_beamlineCTPPS1->calcMatrix();
+-        m_beamlineCTPPS2->calcMatrix();
+-    } else {
++    if(!SetBeamLine()) {
+         if ( m_verbosity ) LogDebug("CTPPSHectorSetup") << "CTPPSHector: WARNING: lengthctpps=  " << lengthctpps;
+     } 
+ }
+@@ -122,7 +101,7 @@ void CTPPSHector::clear(){
+ 
+ void CTPPSHector::add( const HepMC::GenEvent * evt ,const edm::EventSetup & iSetup, CLHEP::HepRandomEngine * engine) {
+ 
+-    H_BeamParticle* h_p  = nullptr;
++    H_BeamParticle* h_p  = NULL;
+     unsigned int line;
+ 
+     for (HepMC::GenEvent::particle_const_iterator eventParticle =evt->particles_begin();
+@@ -154,30 +133,34 @@ void CTPPSHector::add( const HepMC::GenEvent * evt ,const edm::EventSetup & iSet
+ 
+                     e = sqrt(pow(mass,2)+pow(px,2)+pow(py,2)+pow(pz,2));
+ 
++                    TXforPosition=0.;
++                    TYforPosition=0.;
++
+                     // Apply Beam and Crossing Angle Corrections
+                     LorentzVector p_out(px,py,pz,e);
+                     ApplyBeamCorrection(p_out, engine);
+-                    if (fCrossAngleCorr) LorentzBoost(const_cast<LorentzVector&>(p_out),"LAB");
++                    CTPPSTools::LorentzBoost(p_out,"LAB");
+ 
+                     // from mm to cm        
+                     double XforPosition = (*eventParticle)->production_vertex()->position().x()/cm;//cm
+                     double YforPosition = (*eventParticle)->production_vertex()->position().y()/cm;//cm
+                     double ZforPosition = (*eventParticle)->production_vertex()->position().z()/cm;//cm
+ 
+-                    if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") << " fVtxMeanX: " << fVtxMeanX << " fVtxMeanY: " << fVtxMeanY << " fVtxMeanZ: "  << fVtxMeanZ ;
+-                    // It is important to set the Position before the 4Momentum otherwise HECTOR resets variables
+-                    h_p->setPosition(-(XforPosition-fVtxMeanX)*cm_to_um,(YforPosition-fVtxMeanY)*cm_to_um,TXforPosition,TYforPosition,-(ZforPosition)*cm_to_m);
+-                    
+-                    h_p->set4Momentum( -p_out.px(), p_out.py(), -p_out.pz(), p_out.e() );
++                    if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") <<
++                                    " fVtxMeanX: " << fVtxMeanX << " fVtxMeanY: " << fVtxMeanY << " fVtxMeanZ: "  << fVtxMeanZ ;
+ 
++                    int direction=(pz>0)?1:-1;
++
++                    h_p->set4Momentum(-direction*p_out.px(), p_out.py(), abs(p_out.pz()), p_out.e());
++                    h_p->setPosition(-direction*((XforPosition-fVtxMeanX)*cm_to_um+fBeamXatIP*mm_to_um),(YforPosition-fVtxMeanY)*cm_to_um+fBeamYatIP*mm_to_um,
++                                        h_p->getTX()+TXforPosition,h_p->getTY()+TYforPosition,-direction*(ZforPosition-fVtxMeanZ)*cm_to_m);
++                    
+                     m_beamPart[line] = h_p;
+                     m_direct[line] = 0;
+                     m_direct[line] = ( pz > 0 ) ? 1 : -1;
+-
+-                    m_eta[line] = (*eventParticle)->momentum().eta();
++                    m_eta[line] = p_out.eta();
+                     m_pdg[line] = (*eventParticle)->pdg_id();
+-                    m_pz[line]  = (*eventParticle)->momentum().pz();
+-
++                    m_pz[line]  = p_out.pz();
+                     if(m_verbosity) { 
+                         LogDebug("CTPPSHectorEventProcessing") << "CTPPSHector:add: barcode = " << line 
+                             << " status = " << g->status() 
+@@ -197,7 +180,7 @@ void CTPPSHector::add( const HepMC::GenEvent * evt ,const edm::EventSetup & iSet
+ void CTPPSHector::filterCTPPS(TRandom3* rootEngine){
+ 
+     unsigned int line;
+-    H_BeamParticle * part = nullptr;
++    H_BeamParticle * part = NULL;
+  
+     std::map< unsigned int, H_BeamParticle* >::iterator it;
+ 
+@@ -207,7 +190,7 @@ void CTPPSHector::filterCTPPS(TRandom3* rootEngine){
+     float x1_ctpps;
+     float y1_ctpps;
+ 
+-    if ( !m_beamPart.empty() && lengthctpps>0. ) {
++    if ( m_beamPart.size() && lengthctpps>0. ) {
+ 
+         for (it = m_beamPart.begin(); it != m_beamPart.end(); ++it ) {
+             line = (*it).first;
+@@ -216,19 +199,21 @@ void CTPPSHector::filterCTPPS(TRandom3* rootEngine){
+             if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") << "CTPPSHector:filterCTPPS: barcode = " << line;
+             if ( (*m_isCharged.find( line )).second ) {
+                 direction = (*m_direct.find( line )).second;
+-                if ( direction == 1 && m_beamlineCTPPS1 != nullptr ) {
++                if ( direction == 1 && m_beamlineCTPPS1 != 0 ) {
+                     
+                    part->computePath(&*m_beamlineCTPPS1);
+ 
+                     is_stop = part->stopped(&* m_beamlineCTPPS1 );
+-                    if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") << "CTPPSHector:filterCTPPS: barcode = " << line << " positive is_stop=  "<< is_stop;
++                    if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") << 
++                                    "CTPPSHector:filterCTPPS: barcode = " << line << " positive is_stop=  "<< is_stop;
+                 }
+-                else if ( direction == -1 && m_beamlineCTPPS2 != nullptr ){
++                else if ( direction == -1 && m_beamlineCTPPS2 != 0 ){
+ 
+-                    part->computePath(&*m_beamlineCTPPS2 );
++                    part->computePath(&*m_beamlineCTPPS2);
+ 
+                     is_stop = part->stopped(&*m_beamlineCTPPS2 );
+-                    if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") << "CTPPSHector:filterCTPPS: barcode = " << line << " negative is_stop=  "<< is_stop;
++                    if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") << 
++                                    "CTPPSHector:filterCTPPS: barcode = " << line << " negative is_stop=  "<< is_stop;
+                 }
+                 else {
+                     is_stop = true;
+@@ -237,18 +222,19 @@ void CTPPSHector::filterCTPPS(TRandom3* rootEngine){
+ 
+                 //propagating
+                 m_isStoppedctpps[line] = is_stop;
+-                if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") << "CTPPSHector:filterCTPPS: barcode = " << line << " isStopped=" << (*m_isStoppedctpps.find(line)).second;
++                if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") << 
++                                "CTPPSHector:filterCTPPS: barcode = " << line << " isStopped=" << (*m_isStoppedctpps.find(line)).second;
+ 
+                 if (!is_stop) {
+                     if ( direction == 1 ) part->propagate( m_f_ctpps_f ); 
+                     if ( direction == -1 ) part->propagate( m_b_ctpps_b );  
+-                    x1_ctpps = -part->getX()/millimeter;
++                    x1_ctpps = part->getX()/millimeter;
+                     y1_ctpps = part->getY()/millimeter;
+-                    if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") << "CTPPSHector:filterCTPPS: barcode = " << line << " x=  "<< x1_ctpps <<" y= " << y1_ctpps;
+-
+-                    m_xAtTrPoint[line]  = x1_ctpps;
++                    if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") << 
++                                   "CTPPSHector:filterCTPPS: barcode = " << line << " x=  "<< x1_ctpps <<" y= " << y1_ctpps;
++                    m_xAtTrPoint[line]  = direction*x1_ctpps;
+                     m_yAtTrPoint[line]  = y1_ctpps;
+-                    m_TxAtTrPoint[line] = -part->getTX();
++                    m_TxAtTrPoint[line] = direction*part->getTX(); // needs to be reflected due to the way phi is calculated here
+                     m_TyAtTrPoint[line] = part->getTY();
+                     m_eAtTrPoint[line]  = part->getE();
+ 
+@@ -256,7 +242,8 @@ void CTPPSHector::filterCTPPS(TRandom3* rootEngine){
+             }// if isCharged
+             else {
+                 m_isStoppedctpps[line] = true;// imply that neutral particles stopped to reach 420m
+-                if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") << "CTPPSHector:filterCTPPS: barcode = " << line << " isStopped=" << (*m_isStoppedctpps.find(line)).second;
++                if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") << 
++                                "CTPPSHector:filterCTPPS: barcode = " << line << " isStopped=" << (*m_isStoppedctpps.find(line)).second;
+             }
+ 
+         } // for (it = m_beamPart.begin(); it != m_beamPart.end(); it++ ) 
+@@ -281,65 +268,28 @@ void CTPPSHector::print() const {
+ void CTPPSHector::ApplyBeamCorrection(LorentzVector& p_out, CLHEP::HepRandomEngine* engine)
+ {
+ 
+-    double microrad = 1.e-6;
+-    double theta = p_out.theta(); if (p_out.pz()<0) theta=CLHEP::pi-theta;
+-    double dtheta_x = (double)(m_smearAng)?CLHEP::RandGauss::shoot(engine,0.,m_sigmaSTX):0;
+-    double dtheta_y = (double)(m_smearAng)?CLHEP::RandGauss::shoot(engine,0.,m_sigmaSTY):0;
+-    double denergy  = (double)(m_smearE)?CLHEP::RandGauss::shoot(engine,0.,m_sig_e):0.;
++    double theta  = p_out.theta();
++    double thetax = atan(p_out.px()/abs(p_out.pz()));
++    double thetay = atan(p_out.py()/abs(p_out.pz()));
++    double energy = p_out.e();
+ 
+-    double p = sqrt((p_out.px())*(p_out.px())+(p_out.py())*(p_out.py())+(p_out.pz())*(p_out.pz()));
+-    double px = p*sin(theta+dtheta_x*microrad)*cos(p_out.phi());
+-    double py = p*sin(theta+dtheta_y*microrad)*sin(p_out.phi());
+-    double pz = p*(cos(theta)+denergy);
++    int direction = (p_out.pz()>0)?1:-1;
+ 
+-    if (p_out.pz()<0) pz*=-1;
++    if (p_out.pz()<0) theta=CLHEP::pi-theta;
+ 
+-    double e  = sqrt(px*px+py*py+pz*pz+ProtonMassSQ);
+-    p_out.setPx(px);
+-    p_out.setPy(py);
+-    p_out.setPz(pz);
+-    p_out.setE(e);
++    double dtheta_x = (double)(m_smearAng)?CLHEP::RandGauss::shoot(engine,0.,m_sigmaSTX):0;
++    double dtheta_y = (double)(m_smearAng)?CLHEP::RandGauss::shoot(engine,0.,m_sigmaSTY):0;
++    double denergy  = (double)(m_smearE)?CLHEP::RandGauss::shoot(engine,0.,m_sig_e):0.;
+ 
+-}
++    double s_theta = sqrt(pow(thetax+dtheta_x*urad,2)+pow(thetay+dtheta_y*urad,2)); 
++    double s_phi = atan2(thetay+dtheta_y*urad,thetax+dtheta_x*urad);
++    energy+=denergy;
++    double p = sqrt(pow(energy,2)-ProtonMassSQ);
+ 
+-void CTPPSHector::LorentzBoost(LorentzVector& p_out, const string& frame)
+-{
+-    // Use a matrix
+-    double microrad = 1.e-6;
+-    TMatrixD tmpboost(4,4);
+-    double alpha_ = 0.;
+-    double phi_  = fCrossingAngle*microrad;
+-    if (p_out.pz()<0) phi_*=-1;
+-    tmpboost(0,0) = 1./cos(phi_);
+-    tmpboost(0,1) = - cos(alpha_)*sin(phi_);
+-    tmpboost(0,2) = - tan(phi_)*sin(phi_);
+-    tmpboost(0,3) = - sin(alpha_)*sin(phi_);
+-    tmpboost(1,0) = - cos(alpha_)*tan(phi_);
+-    tmpboost(1,1) = 1.;
+-    tmpboost(1,2) = cos(alpha_)*tan(phi_);
+-    tmpboost(1,3) = 0.;
+-    tmpboost(2,0) = 0.;
+-    tmpboost(2,1) = - cos(alpha_)*sin(phi_);
+-    tmpboost(2,2) = cos(phi_);
+-    tmpboost(2,3) = - sin(alpha_)*sin(phi_);
+-    tmpboost(3,0) = - sin(alpha_)*tan(phi_);
+-    tmpboost(3,1) = 0.;
+-    tmpboost(3,2) = sin(alpha_)*tan(phi_);
+-    tmpboost(3,3) = 1.;
+-
+-    if(frame=="LAB") tmpboost.Invert();
+-
+-    TMatrixD p4(4,1);
+-    p4(0,0) = p_out.e();
+-    p4(1,0) = p_out.px();
+-    p4(2,0) = p_out.py();
+-    p4(3,0) = p_out.pz();
+-    TMatrixD p4lab(4,1);
+-    p4lab = tmpboost * p4;
+-    p_out.setPx(p4lab(1,0));
+-    p_out.setPy(p4lab(2,0));
+-    p_out.setPz(p4lab(3,0));
+-    p_out.setE(p4lab(0,0));
++    p_out.setPx((double)p*sin(s_theta)*cos(s_phi));
++    p_out.setPy((double)p*sin(s_theta)*sin(s_phi));
++    p_out.setPz((double)p*(cos(s_theta))*direction);
++    p_out.setE(energy);
+ }
+ 
+ HepMC::GenEvent * CTPPSHector::addPartToHepMC( HepMC::GenEvent * evt ){
+@@ -349,7 +299,7 @@ HepMC::GenEvent * CTPPSHector::addPartToHepMC( HepMC::GenEvent * evt ){
+     unsigned int line;
+ 
+     HepMC::GenParticle * gpart;
+-    long double tx,ty,theta,fi,energy,time = 0;
++    double tx,ty,theta,fi,energy,time = 0;
+     std::map< unsigned int, H_BeamParticle* >::iterator it;
+ 
+     for (it = m_beamPart.begin(); it != m_beamPart.end(); ++it ) {
+@@ -367,7 +317,7 @@ HepMC::GenEvent * CTPPSHector::addPartToHepMC( HepMC::GenEvent * evt ){
+                 ty     = (*m_TyAtTrPoint.find(line)).second / 1000000.;
+                 theta  = sqrt((tx*tx) + (ty*ty));
+                 double ddd = 0.;
+-                long double fi_  = 0.; 
++                double fi_  = 0.; 
+                 if ( !((*m_isStoppedctpps.find(line)).second)) {
+                     if( (*m_direct.find( line )).second >0 ) {
+                         ddd = m_f_ctpps_f;
+@@ -429,3 +379,60 @@ HepMC::GenEvent * CTPPSHector::addPartToHepMC( HepMC::GenEvent * evt ){
+ 
+     return evt;
+ } 
++bool CTPPSHector::SetBeamLine()
++{
++    edm::FileInPath b1(beam1filename.c_str());
++    edm::FileInPath b2(beam2filename.c_str());
++    if(m_verbosity) {
++        edm::LogInfo("CTPPSHectorSetup") << "===================================================================\n"  
++            << " * * * * * * * * * * * * * * * * * * * * * * * * * * * *           \n"  
++            << " *                                                         *       \n"  
++            << " *                   --<--<--  A fast simulator --<--<--     *     \n"  
++            << " *                 | --<--<--     of particle   --<--<--     *     \n"  
++            << " *  ----HECTOR----<                                          *     \n"  
++            << " *                 | -->-->-- transport through-->-->--      *     \n"   
++            << " *                   -->-->-- generic beamlines -->-->--     *     \n"  
++            << " *                                                           *     \n"   
++            << " * JINST 2:P09005 (2007)                                     *     \n"  
++            << " *      X Rouby, J de Favereau, K Piotrzkowski (CP3)         *     \n"  
++            << " *       http://www.fynu.ucl.ac.be/hector.html               *     \n"  
++            << " *                                                           *     \n"  
++            << " * Center for Cosmology, Particle Physics and Phenomenology  *     \n"  
++            << " *              Universite catholique de Louvain             *     \n"  
++            << " *                 Louvain-la-Neuve, Belgium                 *     \n"  
++            << " *                                                         *       \n"  
++            << " * * * * * * * * * * * * * * * * * * * * * * * * * * * *           \n"   
++            << " CTPPSHector configuration: \n" 
++            << " m_CTPPSTransport   = " << m_CTPPSTransport << "\n"
++            << " lengthctpps      = " << lengthctpps << "\n"
++            << " m_f_ctpps_f      =  " << m_f_ctpps_f << "\n"
++            << " m_b_ctpps_b      =  " << m_b_ctpps_b << "\n"
++            << "===================================================================\n";
++    }  
++    m_beamlineCTPPS1=NULL;
++    m_beamlineCTPPS2=NULL;
++
++    // construct beam line for CTPPS (forward 1 backward 2):                                                                                           
++    if(m_CTPPSTransport && lengthctpps>0. ) {
++        m_beamlineCTPPS1 = std::unique_ptr<H_BeamLine>(new H_BeamLine(-1, lengthctpps + 0.1 )); // (direction, length)
++        m_beamlineCTPPS1->fill( b2.fullPath(), 1, "IP5");
++        m_beamlineCTPPS2 = std::unique_ptr<H_BeamLine>(new H_BeamLine( 1, lengthctpps + 0.1 )); //
++        m_beamlineCTPPS2->fill( b1.fullPath(), 1, "IP5");
++        //m_beamlineCTPPS1->offsetElements( 120, 0.097 );
++        //m_beamlineCTPPS2->offsetElements( 120,-0.097 );
++    }
++    else {
++        if ( m_verbosity ) LogDebug("CTPPSHectorSetup") << "CTPPSHector: WARNING: lengthctpps=  " << lengthctpps;        
++        return false;
++    }
++    //if (m_verbosity) {
++          std::cout  << "====================================================================\n"
++                     << "                  Forward beam line elements \n";
++          m_beamlineCTPPS1->showElements();
++          std::cout << "====================================================================\n"
++                    << "                 Backward beam line elements \n";
++          m_beamlineCTPPS2->showElements();
++    //}
++
++    return true;
++}
+diff --git a/SimTransport/HectorProducer/src/CTPPSHectorProducer.cc b/SimTransport/HectorProducer/src/CTPPSHectorProducer.cc
+index 5e8261e..11a6e83 100644
+--- a/SimTransport/HectorProducer/src/CTPPSHectorProducer.cc
++++ b/SimTransport/HectorProducer/src/CTPPSHectorProducer.cc
+@@ -63,6 +63,7 @@ void CTPPSHectorProducer::produce(edm::Event & iEvent, const edm::EventSetup & e
+ 
+     using namespace edm;
+     using namespace std;
++    //hector_ctpps->SetBeamLine();
+     HepMC::GenEvent * evt_;
+     edm::Service<edm::RandomNumberGenerator> rng;
+     CLHEP::HepRandomEngine* engine = &rng->getEngine(iEvent.streamID());
+@@ -115,6 +116,6 @@ void CTPPSHectorProducer::produce(edm::Event & iEvent, const edm::EventSetup & e
+ 
+     iEvent.put(std::move(NewCorrespondenceMap));
+     hector_ctpps->clear();
+-
++    //hector_ctpps->DelBeamLine();
+ }
+ DEFINE_FWK_MODULE (CTPPSHectorProducer);
+diff --git a/SimTransport/HectorProducer/src/Hector.cc b/SimTransport/HectorProducer/src/Hector.cc
+index 75243a1..c0e10cf 100644
+--- a/SimTransport/HectorProducer/src/Hector.cc
++++ b/SimTransport/HectorProducer/src/Hector.cc
+@@ -12,7 +12,7 @@
+ 
+ #include "H_Parameters.h"
+ 
+-#include <cmath>
++#include <math.h>
+ 
+ Hector::Hector(const edm::ParameterSet & param, bool verbosity, bool FP420Transport,bool ZDCTransport) : 
+   m_verbosity(verbosity), 
+@@ -239,7 +239,7 @@ void Hector::filterFP420(TRandom3* rootEngine){
+   float x1_420;
+   float y1_420;
+   
+-  if ( !m_beamPart.empty() && lengthfp420>0. ) {
++  if ( m_beamPart.size() && lengthfp420>0. ) {
+     
+     for (it = m_beamPart.begin(); it != m_beamPart.end(); ++it ) {
+       line = (*it).first;
+@@ -268,12 +268,12 @@ void Hector::filterFP420(TRandom3* rootEngine){
+             part->smearE(SBE,rootEngine);  // in GeV, default is SBE=0.79
+           }
+         }
+-        if ( direction == 1 && m_beamlineFP4201 != nullptr ) {
++        if ( direction == 1 && m_beamlineFP4201 != 0 ) {
+           part->computePath( m_beamlineFP4201 );
+           is_stop = part->stopped( m_beamlineFP4201 );
+           if(m_verbosity) LogDebug("HectorEventProcessing") << "Hector:filterFP420: barcode = " << line << " positive is_stop=  "<< is_stop;
+         }
+-        else if ( direction == -1 && m_beamlineFP4202 != nullptr ){
++        else if ( direction == -1 && m_beamlineFP4202 != 0 ){
+           part->computePath( m_beamlineFP4202 );
+           is_stop = part->stopped( m_beamlineFP4202 );
+           if(m_verbosity) LogDebug("HectorEventProcessing") << "Hector:filterFP420: barcode = " << line << " negative is_stop=  "<< is_stop;
+@@ -320,7 +320,7 @@ void Hector::filterZDC(TRandom3* rootEngine){
+   bool is_stop_zdc = false;
+   int direction;
+   
+-  if ( !m_beamPart.empty() && lengthzdc>0. ) {
++  if ( m_beamPart.size() && lengthzdc>0. ) {
+     
+     for (it = m_beamPart.begin(); it != m_beamPart.end(); ++it ) {
+       line = (*it).first;
+@@ -352,12 +352,12 @@ void Hector::filterZDC(TRandom3* rootEngine){
+             part->smearE(SBE,rootEngine);  // in GeV, default is SBE=0.79
+           }
+         }
+-        if ( direction == 1 && m_beamlineZDC1 != nullptr ){
++        if ( direction == 1 && m_beamlineZDC1 != 0 ){
+           part->computePath( m_beamlineZDC1 );
+           is_stop_zdc = part->stopped( m_beamlineZDC1 );
+           m_isStoppedzdc[line] = is_stop_zdc;
+           if(m_verbosity) LogDebug("HectorEventProcessing") << "Hector:filterZDC: barcode " << line << " positive is_stop_zdc=  "<< is_stop_zdc;
+-        } else if ( direction == -1 && m_beamlineZDC2 != nullptr ){
++        } else if ( direction == -1 && m_beamlineZDC2 != 0 ){
+           part->computePath( m_beamlineZDC2 );
+           is_stop_zdc = part->stopped( m_beamlineZDC2 );
+           m_isStoppedzdc[line] = is_stop_zdc;
+@@ -394,7 +394,7 @@ void Hector::filterD1(TRandom3* rootEngine){
+   float x1_d1;
+   float y1_d1;
+   
+-  if ( !m_beamPart.empty() && lengthd1>0.) {
++  if ( m_beamPart.size() && lengthd1>0.) {
+     
+     for (it = m_beamPart.begin(); it != m_beamPart.end(); ++it ) {
+       line = (*it).first;
+@@ -422,12 +422,12 @@ void Hector::filterD1(TRandom3* rootEngine){
+             part->smearE(SBE,rootEngine);  // in GeV, default is SBE=0.79
+           }
+         }
+-        if ( direction == 1 && m_beamlineD11 != nullptr ) {
++        if ( direction == 1 && m_beamlineD11 != 0 ) {
+           part->computePath( m_beamlineD11 );
+           is_stop_d1 = part->stopped( m_beamlineD11 );
+           m_isStoppedd1[line] = is_stop_d1;
+           if(m_verbosity) LogDebug("HectorEventProcessing") << "Hector:filterD1 barcode " << line << " positive is_stop_d1 =  "<< is_stop_d1;
+-        } else  if ( direction == -1 && m_beamlineD12 != nullptr ){
++        } else  if ( direction == -1 && m_beamlineD12 != 0 ){
+           part->computePath( m_beamlineD12 );
+           is_stop_d1 = part->stopped( m_beamlineD12 );
+           m_isStoppedd1[line] = is_stop_d1;
+diff --git a/DataFormats/CTPPSDetId/interface/TotemRPDetId.h b/DataFormats/CTPPSDetId/interface/TotemRPDetId.h
+index 9061423..d205d2f 100644
+--- a/DataFormats/CTPPSDetId/interface/TotemRPDetId.h
++++ b/DataFormats/CTPPSDetId/interface/TotemRPDetId.h
+@@ -38,7 +38,7 @@ class TotemRPDetId : public CTPPSDetId
+     {
+     }
+   
+-    /// Construct from hierarchy indeces.
++    /// Construct from hierarchy indices.
+     TotemRPDetId(uint32_t Arm, uint32_t Station, uint32_t RomanPot=0, uint32_t Plane=0, uint32_t Chip=0);
+ 
+     static const uint32_t startPlaneBit, maskPlane, maxPlane, lowMaskPlane;
+@@ -126,6 +126,14 @@ class TotemRPDetId : public CTPPSDetId
+       name += chipNames[chip()];
+     }
+ 
++    static uint32_t rawToDecId(uint32_t raw)
++    {
++      return ((raw >> startArmBit) & maskArm) * 1000
++             + ((raw >> startStationBit) & maskStation) * 100
++             + ((raw >> startRPBit) & maskRP) * 10
++             + ((raw >> startPlaneBit) & maskPlane);
++    }
++
+   private:
+     static const std::string planeNames[];
+     static const std::string chipNames[];
+diff --git a/DataFormats/CTPPSDigi/src/classes.h b/DataFormats/CTPPSDigi/src/classes.h
+index 61534dd..b45fac3 100644
+--- a/DataFormats/CTPPSDigi/src/classes.h
++++ b/DataFormats/CTPPSDigi/src/classes.h
+@@ -21,6 +21,10 @@
+ #include "DataFormats/CTPPSDigi/interface/CTPPSPixelDigiCollection.h"
+ #include "DataFormats/CTPPSDigi/interface/CTPPSPixelDataError.h"
+ 
++#include "DataFormats/CTPPSDigi/interface/RPStripDigi.h"
++#include "DataFormats/CTPPSDigi/interface/RPDetTrigger.h"
++#include "DataFormats/CTPPSDigi/interface/RPDigCluster.h"
++
+ #include <vector>
+ 
+ namespace DataFormats_CTPPSDigi {
+@@ -33,6 +37,28 @@ namespace DataFormats_CTPPSDigi {
+     edm::Wrapper<edm::DetSet<TotemRPDigi> > wds_rp_str_dig;
+     edm::Wrapper<edm::DetSetVector<TotemRPDigi> > wdsv_rp_str_dig;
+ 
++    RPStripDigi rp_str_digT;
++    edm::DetSet<RPStripDigi> ds_rp_str_digT;
++    std::vector<RPStripDigi> vec_rp_str_digT;
++    edm::DetSetVector<RPStripDigi> dsv_rp_str_digT;
++    std::vector<edm::DetSet<RPStripDigi> > vec_ds_rp_str_digT;
++    edm::Wrapper<edm::DetSet<RPStripDigi> > wds_rp_str_digT;
++    edm::Wrapper<edm::DetSetVector<RPStripDigi> > wdsv_rp_str_digT;
++
++    RPDetTrigger rp_str_tri;
++    edm::DetSet<RPDetTrigger> ds_rp_str_tri;
++    std::vector<RPDetTrigger> vec_rp_str_tri;
++    std::vector<edm::DetSet<RPDetTrigger> > vec_ds_rp_str_tri;
++    edm::DetSetVector<RPDetTrigger> dsv_rp_str_tri;
++    edm::Wrapper<edm::DetSet<RPDetTrigger> > wds_rp_str_tri;
++    edm::Wrapper<edm::DetSetVector<RPDetTrigger> > wdsv_rp_str_tri;
++
++    RPDigCluster dc;
++    edm::DetSet<RPDigCluster> dsdc;
++    std::vector<RPDigCluster> svdc;
++    std::vector<edm::DetSet<RPDigCluster> > svdsdc;
++    edm::DetSetVector<RPDigCluster> dsvdc;
++    edm::Wrapper<edm::DetSetVector<RPDigCluster> > wdsvdc;
+     TotemTriggerCounters dummy10;
+     edm::Wrapper<TotemTriggerCounters> dummy11;
+ 
+diff --git a/DataFormats/CTPPSDigi/src/classes_def.xml b/DataFormats/CTPPSDigi/src/classes_def.xml
+index c39918d..8a11b30 100644
+--- a/DataFormats/CTPPSDigi/src/classes_def.xml
++++ b/DataFormats/CTPPSDigi/src/classes_def.xml
+@@ -9,6 +9,35 @@
+   <class name="edm::Wrapper<edm::DetSet<TotemRPDigi> >"/>
+   <class name="edm::Wrapper<edm::DetSetVector<TotemRPDigi> >"/>
+ 
++  <class name="RPStripDigi" ClassVersion="3">
++    <version ClassVersion="3" checksum="3649241185"/>
++  </class>
++  <class name="edm::DetSet<RPStripDigi>"/>
++  <class name="std::vector<edm::DetSet<RPStripDigi> >"/>
++  <class name="std::vector<RPStripDigi>"/>
++  <class name="edm::DetSetVector<RPStripDigi>"/>
++  <class name="edm::Wrapper<edm::DetSet<RPStripDigi> >"/>
++  <class name="edm::Wrapper<edm::DetSetVector<RPStripDigi> >"/>
++ 
++  <class name="RPDetTrigger" ClassVersion="4">
++    <version ClassVersion="4" checksum="467767359"/>
++  </class>
++  <class name="edm::DetSet<RPDetTrigger>"/>
++  <class name="std::vector<edm::DetSet<RPDetTrigger> >"/>
++  <class name="std::vector<RPDetTrigger>"/>
++  <class name="edm::DetSetVector<RPDetTrigger>"/>
++  <class name="edm::Wrapper<edm::DetSetVector<RPDetTrigger> >"/>
++  <class name="edm::Wrapper<edm::DetSet<RPDetTrigger> >"/>
++
++  <class name="RPDigCluster" ClassVersion="5">
++    <version ClassVersion="5" checksum="2487179143"/>
++  </class>
++  <class name="edm::DetSet<RPDigCluster>"/>
++  <class name="std::vector<RPDigCluster>"/>
++  <class name="std::vector<edm::DetSet<RPDigCluster> >"/>
++  <class name="edm::DetSetVector<RPDigCluster>"/>
++  <class name="edm::Wrapper<edm::DetSetVector<RPDigCluster> >"/>
++
+   <class name="TotemTriggerCounters" ClassVersion="2">
+     <version ClassVersion="2" checksum="719923071"/>
+   </class>
+diff --git a/EventFilter/CTPPSRawToDigi/interface/CTPPSPixelDataFormatter.h b/EventFilter/CTPPSRawToDigi/interface/CTPPSPixelDataFormatter.h
+index 0862379..295abf9 100644
+--- a/EventFilter/CTPPSRawToDigi/interface/CTPPSPixelDataFormatter.h
++++ b/EventFilter/CTPPSRawToDigi/interface/CTPPSPixelDataFormatter.h
+@@ -39,6 +39,10 @@
+ 
+ #include "EventFilter/CTPPSRawToDigi/interface/RPixErrorChecker.h"
+ 
++#include "CondFormats/CTPPSReadoutObjects/interface/CTPPSPixelIndices.h"
++#include "CondFormats/CTPPSReadoutObjects/interface/CTPPSElectronicIndex.h"
++#include "FWCore/Utilities/interface/typedefs.h"
++
+ #include <cstdint>
+ #include <vector>
+ #include <map>
+@@ -61,6 +65,8 @@ public:
+   typedef uint32_t Word32;
+   typedef uint64_t Word64;
+ 
++  typedef std::map<cms_uint32_t,DetDigis> Digis;
++
+   CTPPSPixelDataFormatter(std::map<CTPPSPixelFramePosition, CTPPSPixelROCInfo> const &mapping);
+ 
+   void setErrorStatus(bool theErrorStatus);
+@@ -69,11 +75,12 @@ public:
+ 
+   void interpretRawData( bool& errorsInEvent, int fedId,  const FEDRawData & data, Collection & digis, Errors & errors);
+ 
++  int nDigis() const { return m_DigiCounter; }
+ 
++  void formatRawData( unsigned int lvl1_ID, RawData & fedRawData, const Digis & digis, std::map< std::map<const uint32_t,std::map<short unsigned int, short unsigned int>>, std::map<short unsigned int,short unsigned int>> iDdet2fed);
+ 
+ private:
+ 
+-
+   mutable int m_WordCounter;
+ 
+   bool m_IncludeErrors;
+@@ -81,14 +88,18 @@ private:
+ 
+   int m_ADC_shift, m_PXID_shift, m_DCOL_shift, m_ROC_shift, m_LINK_shift;
+   Word32 m_LINK_mask, m_ROC_mask, m_DCOL_mask, m_PXID_mask, m_ADC_mask;
+-  
+-
++ 
+   int checkError(const Word32& data) const;
+ 
+   std::string print(const Word64& word) const;
+ 
+   const std::map<CTPPSPixelFramePosition, CTPPSPixelROCInfo> &m_Mapping;
+ 
++  mutable int m_DigiCounter;
++  int maxROCIndex;
++  int allDetDigis;
++  int hasDetDigis;
++  CTPPSPixelIndices theIndices;
+ };
+ 
+ #endif
+diff --git a/EventFilter/CTPPSRawToDigi/python/totemVFATRawToDigi_cfi.py b/EventFilter/CTPPSRawToDigi/python/totemVFATRawToDigi_cfi.py
+index c9f7ab1..b69db80 100644
+--- a/EventFilter/CTPPSRawToDigi/python/totemVFATRawToDigi_cfi.py
++++ b/EventFilter/CTPPSRawToDigi/python/totemVFATRawToDigi_cfi.py
+@@ -27,7 +27,7 @@ totemVFATRawToDigi = cms.EDProducer("TotemVFATRawToDigi",
+     # 2: print an error message and do not process the frame
+     testFootprint = cms.uint32(2),
+     testCRC = cms.uint32(2),
+-    testID = cms.uint32(2),               # compare the ID from data and mapping
++    testID = cms.uint32(1),               # compare the ID from data and mapping
+     testECMostFrequent = cms.uint32(2),   # compare frame's EC with the most frequent value in the event
+     testBCMostFrequent = cms.uint32(2),   # compare frame's BC with the most frequent value in the event
+ 
+diff --git a/EventFilter/CTPPSRawToDigi/src/CTPPSPixelDataFormatter.cc b/EventFilter/CTPPSRawToDigi/src/CTPPSPixelDataFormatter.cc
+index 1cdb122..9f8aa1f 100644
+--- a/EventFilter/CTPPSRawToDigi/src/CTPPSPixelDataFormatter.cc
++++ b/EventFilter/CTPPSRawToDigi/src/CTPPSPixelDataFormatter.cc
+@@ -14,6 +14,8 @@
+ #include <iostream>
+ 
+ using namespace edm;
++using namespace std;
++using namespace ctppspixelobjects;
+ 
+ namespace {
+   constexpr int m_LINK_bits = 6;
+@@ -43,7 +45,7 @@ CTPPSPixelDataFormatter::CTPPSPixelDataFormatter(std::map<CTPPSPixelFramePositio
+       <<", send exception" ;
+   }
+ 
+-  m_IncludeErrors = false;
++  //m_IncludeErrors = false;
+ 
+   m_ADC_shift  = 0;
+   m_PXID_shift = m_ADC_shift + m_ADC_bits;
+@@ -61,14 +63,12 @@ CTPPSPixelDataFormatter::CTPPSPixelDataFormatter(std::map<CTPPSPixelFramePositio
+ 
+ }
+ 
+-
+ void CTPPSPixelDataFormatter::setErrorStatus(bool errorStatus)
+ {
+   m_IncludeErrors = errorStatus;
+   m_ErrorCheck.setErrorStatus(m_IncludeErrors);
+ }
+ 
+-
+ void CTPPSPixelDataFormatter::interpretRawData(  bool& errorsInEvent, int fedId, const FEDRawData& rawData, 
+ 						 Collection & digis, Errors & errors)
+ {
+@@ -188,6 +188,110 @@ void CTPPSPixelDataFormatter::interpretRawData(  bool& errorsInEvent, int fedId,
+ 
+ }
+ 
++void CTPPSPixelDataFormatter::formatRawData(unsigned int lvl1_ID, RawData & fedRawData, const Digis & digis, std::map<std::map<const uint32_t,std::map<short unsigned int, short unsigned int> >, std::map<short unsigned int,short unsigned int>> iDdet2fed)
++{
++  std::map<int, vector< Word32 > > words; 
++
++  // translate digis into 32-bit raw words and store in map indexed by Fed
++ 
++  for (Digis::const_iterator im = digis.begin(); im != digis.end(); im++) {
++    //if (mapping_.size== 0 ) return; 
++    allDetDigis++;
++    cms_uint32_t rawId = im->first;
++      edm::LogInfo("--- RPix") << " \t\t digi rawId = " << rawId;
++
++    hasDetDigis++;
++    const DetDigis & detDigis = im->second;
++    for (DetDigis::const_iterator it = detDigis.begin(); it != detDigis.end(); it++) {
++        m_DigiCounter++;
++
++        const CTPPSPixelDigi & digi = (*it);
++        int matchRoc = 999, matchfedId = 999, nroc = 999, nlink = 999, rocinCh = 999;
++        int rocPixelRow = -1, rocPixelColumn = -1, rocID = -1;
++        int modulePixelColumn = digi.column();
++        int modulePixelRow = digi.row();
++
++        theIndices.transformToROC(modulePixelColumn, modulePixelRow, rocID, rocPixelColumn, rocPixelRow);
++        const int dcol = theIndices.DColumn(rocPixelColumn);
++        const int pxid =  2*(ROCSizeInX-rocPixelRow)+ (rocPixelColumn%2);
++        for (auto &p : iDdet2fed) {
++           for (auto &pf : p.first){
++              cms_uint32_t prawId = pf.first;
++              for (auto &pfs : pf.second){
++		rocinCh = pfs.second; 
++              if (prawId == rawId){
++                matchRoc = pfs.first;
++                if (matchRoc == rocID){
++                   for (auto &ps : p.second){
++                      matchfedId = ps.first;
++                      nlink = ps.second;
++		      nroc = rocinCh + 1; 
++
++                      CTPPSElectronicIndex cabling = {nlink, nroc, dcol, pxid};
++
++                      cms_uint32_t word =
++                               (cabling.link << m_LINK_shift)
++                             | (cabling.roc  << m_ROC_shift)
++                             | (cabling.dcol << m_DCOL_shift)
++                             | (cabling.pxid << m_PXID_shift)
++                             | (digi.adc() << m_ADC_shift);
++                      words[matchfedId].push_back(word);
++                      m_WordCounter++;
++                   }
++                 } //if rocID
++		}//pfs
++              } // if prawId
++           }
++        }
++    } // for DetDigis
++  } // for Digis
++  LogTrace(" allDetDigis/hasDetDigis : ") << allDetDigis<<"/"<<hasDetDigis;
++  typedef std::map<int, vector<Word32> >::const_iterator RI;
++  for (RI feddata = words.begin(); feddata != words.end(); feddata++) {
++    int fedId = feddata->first;
++
++    // since raw words are written in the form of 64-bit packets
++    // add extra 32-bit word to make number of words even if necessary
++    if (words.find(fedId)->second.size() %2 != 0) words[fedId].push_back( Word32(0) );
++
++    // size in Bytes; create output structure
++    int dataSize = words.find(fedId)->second.size() * sizeof(Word32);
++    int nHeaders = 1;
++    int nTrailers = 1;
++    dataSize += (nHeaders+nTrailers)*sizeof(Word64);
++
++    FEDRawData * rawData = new FEDRawData(dataSize);
++
++    // get begining of data;
++    Word64 * word = reinterpret_cast<Word64* >(rawData->data());
++
++    // write one header
++    FEDHeader::set(  reinterpret_cast<unsigned char*>(word), 0, lvl1_ID, 0, fedId);
++    word++;
++
++    // write data
++    unsigned int nWord32InFed = words.find(fedId)->second.size();
++    for (unsigned int i=0; i < nWord32InFed; i+=2) {
++      *word = (Word64(words.find(fedId)->second[i]) << 32 ) | words.find(fedId)->second[i+1];
++      LogDebug("CTPPSPixelDataFormatter")  << print(*word);
++      word++;
++
++    }
++
++    // write one trailer
++    FEDTrailer::set(  reinterpret_cast<unsigned char*>(word), dataSize/sizeof(Word64), 0,0,0);
++    word++;
++
++    // check memory
++    if (word != reinterpret_cast<Word64* >(rawData->data()+dataSize)) {
++      string s = "** PROBLEM in CTPPSPixelDataFormatter !!!";
++      LogError("CTPPSPixelDataFormatter") << "** PROBLEM in CTPPSPixelDataFormatter!!!";
++      throw cms::Exception(s);
++    } // if (word !=
++    fedRawData[fedId] = *rawData;
++    delete rawData;
++  } // for (RI feddata 
++}
+ 
+ std::string CTPPSPixelDataFormatter::print(const  Word64 & word) const
+ {
+diff --git a/EventFilter/CTPPSRawToDigi/src/RawToDigiConverter.cc b/EventFilter/CTPPSRawToDigi/src/RawToDigiConverter.cc
+index 72c7f36..67809f3 100644
+--- a/EventFilter/CTPPSRawToDigi/src/RawToDigiConverter.cc
++++ b/EventFilter/CTPPSRawToDigi/src/RawToDigiConverter.cc
+@@ -2,7 +2,7 @@
+ *
+ * This is a part of TOTEM offline software.
+ * Authors:
+-*   Jan Kašpar (jan.kaspar@gmail.com)
++*   Jan Ka??par (jan.kaspar@gmail.com)
+ *   Seyed Mohsen Etesami (setesami@cern.ch)
+ ****************************************************************************/
+ 
+@@ -237,21 +237,34 @@ void RawToDigiConverter::run(const VFATFrameCollection &input,
+           record.status.setPartiallyMaskedOut();
+       }
+ 
+-      // create the digi
++      // create the digi. Add correction in order to get the full channel value
++
+       unsigned short offset = chipPosition * 128;
+       const vector<unsigned char> &activeChannels = record.frame->getActiveChannels();
+-
++      vector<unsigned char> vtempCH;
++           
+       for (auto ch : activeChannels)
+       {
+         // skip masked channels
+         if (!anMa.fullMask && anMa.maskedChannels.find(ch) == anMa.maskedChannels.end())
+         {
+-          DetSet<TotemRPDigi> &digiDetSet = rpData.find_or_insert(detId);
+-          digiDetSet.push_back(TotemRPDigi(offset + ch));
++          vtempCH.push_back(ch);
++          if(activeChannels.size() == vtempCH.size()) {
++            unsigned char channel = 0;
++            for(std::vector<unsigned char>::iterator it = vtempCH.begin() ; it != vtempCH.end(); ++it) {
++              channel |= 1 << *it;
++              if(*it > 15) channel |= 1 << ((*it)-16);
++              if(*it < *next(it) || *it == ch ) {
++                DetSet<TotemRPDigi> &digiDetSet = rpData.find_or_insert(detId);
++                digiDetSet.push_back(TotemRPDigi(offset + channel));
++                channel = 0;
++              }
++            }
++          }
+         }
+       }
+     }
+-
++ 
+     // save status
+     DetSet<TotemVFATStatus> &statusDetSet = finalStatus.find_or_insert(detId);
+     statusDetSet.push_back(record.status);
+diff --git a/EventFilter/RawDataCollector/python/rawDataCollector_cfi.py b/EventFilter/RawDataCollector/python/rawDataCollector_cfi.py
+index 173d1ec..9a63e28 100644
+--- a/EventFilter/RawDataCollector/python/rawDataCollector_cfi.py
++++ b/EventFilter/RawDataCollector/python/rawDataCollector_cfi.py
+@@ -34,3 +34,8 @@ run2_GEM_2017.toModify( rawDataCollector.RawCollectionList, func = lambda list:
+ 
+ from Configuration.Eras.Modifier_run3_GEM_cff import run3_GEM
+ run3_GEM.toModify( rawDataCollector.RawCollectionList, func = lambda list: list.append(cms.InputTag("gemPacker")) )
++
++from Configuration.Eras.Modifier_ctpps_2016_cff import ctpps_2016
++ctpps_2016.toModify(rawDataCollector.RawCollectionList, func = lambda list:list.append(cms.InputTag("ctppsTotemRawData")) )
++ctpps_2016.toModify(rawDataCollector.RawCollectionList, func = lambda list:list.append(cms.InputTag("ctppsPixelRawData")) )
++
+diff --git a/Geometry/CMSCommonData/data/extend/cmsextent.xml b/Geometry/CMSCommonData/data/extend/cmsextent.xml
+index 61c0e49..394daf8 100644
+--- a/Geometry/CMSCommonData/data/extend/cmsextent.xml
++++ b/Geometry/CMSCommonData/data/extend/cmsextent.xml
+@@ -13,15 +13,20 @@
+ 	</ConstantsSection>
+ 	<SolidSection label="cmsextent.xml">
+ 		<Tubs name="CMStoZDC" rMin="[Rmin]" rMax="[CMSR2]" dz="56*m" startPhi="0*deg" deltaPhi="360*deg"/>
+-		<Tubs name="ZDCtoFP420" rMin="[Rmin]" rMax="[CMSR2]" dz="120*m" startPhi="0*deg" deltaPhi="360*deg"/>
++		<Tubs name="ZDCtoVF200" rMin="[Rmin]" rMax="[CMSR2]" dz="26*m" startPhi="0*deg" deltaPhi="360*deg"/>
++		<Tubs name="VF200toFP420" rMin="[Rmin]" rMax="[CMSR2]" dz="89.392*m" startPhi="0*deg" deltaPhi="360*deg"/>
+ 	</SolidSection>
+ 	<LogicalPartSection label="cmsextent.xml">
+ 		<LogicalPart name="CMStoZDC" category="unspecified">
+ 			<rSolid name="CMStoZDC"/>
+ 			<rMaterial name="materials:Air"/>
+ 		</LogicalPart>
+-		<LogicalPart name="ZDCtoFP420" category="unspecified">
+-			<rSolid name="ZDCtoFP420"/>
++		<LogicalPart name="ZDCtoVF200" category="unspecified">
++			<rSolid name="ZDCtoVF200"/>
++			<rMaterial name="materials:Air"/>
++		</LogicalPart>
++		<LogicalPart name="VF200toFP420" category="unspecified">
++			<rSolid name="VF200toFP420"/>
+ 			<rMaterial name="materials:Air"/>
+ 		</LogicalPart>
+ 	</LogicalPartSection>
+@@ -38,19 +43,30 @@
+ 		</PosPart>
+ 		<PosPart copyNumber="1">
+ 			<rParent name="cms:CMSE"/>
+-			<rChild name="cmsextent:ZDCtoFP420"/>
+-			<Translation x="0*fm" y="0*fm" z="270*m"/>
++			<rChild name="cmsextent:ZDCtoVF200"/>
++			<Translation x="0*fm" y="0*fm" z="176.769*m"/>
++		</PosPart>
++		<PosPart copyNumber="2">
++			<rParent name="cms:CMSE"/>
++			<rChild name="cmsextent:ZDCtoVF200"/>
++			<Translation x="0*fm" y="0*fm" z="-176.769*m"/>
++		</PosPart>
++		<PosPart copyNumber="1">
++			<rParent name="cms:CMSE"/>
++			<rChild name="cmsextent:VF200toFP420"/>
++			<Translation x="0*fm" y="0*fm" z="310.*m"/>
+ 		</PosPart>
+ 		<PosPart copyNumber="2">
+ 			<rParent name="cms:CMSE"/>
+-			<rChild name="cmsextent:ZDCtoFP420"/>
+-			<Translation x="0*fm" y="0*fm" z="-270*m"/>
++			<rChild name="cmsextent:VF200toFP420"/>
++			<Translation x="0*fm" y="0*fm" z="-310.*m"/>
+ 		</PosPart>
+ 	</PosPartSection>
+ 	<SpecParSection label="cmsextent.xml" eval="true">
+ 		<SpecPar name="cmsextent">
+ 			<PartSelector path="//CMStoZDC"/>
+-			<PartSelector path="//ZDCtoFP420"/>
++			<PartSelector path="//ZDCtoVF200"/>
++			<PartSelector path="//VF200toFP420"/>
+ 			<Parameter name="CMSCutsRegion" value="InterimRegion" eval="false"/>
+ 			<Parameter name="ProdCutsForElectrons" value="1*mm"/>
+ 			<Parameter name="ProdCutsForPositrons" value="1*mm"/>
+diff --git a/Geometry/VeryForwardData/data/CTPPS_Diamond_Sensitive_Dets.xml b/Geometry/VeryForwardData/data/CTPPS_Diamond_Sensitive_Dets.xml
+index 70fa8ae..67a18b7 100644
+--- a/Geometry/VeryForwardData/data/CTPPS_Diamond_Sensitive_Dets.xml
++++ b/Geometry/VeryForwardData/data/CTPPS_Diamond_Sensitive_Dets.xml
+@@ -8,7 +8,7 @@
+             <PartSelector path="//CTPPS_Diamond_Pattern.*_Segment.*:CTPPS_Diamond_Segment"/>
+ 
+             <Parameter name="SensitiveDetector" value="CTPPSDiamondSensitiveDetector" eval="false"/>
+-            <Parameter name="ReadOutName" value="CTPPSHitsDiamond" eval="false"/>
++            <Parameter name="ReadOutName" value="CTPPSTimingHits" eval="false"/>
+         </SpecPar>
+     </SpecParSection>
+ </DDDefinition>
+diff --git a/Geometry/VeryForwardData/data/CTPPS_UFSD_Sensitive_Dets.xml b/Geometry/VeryForwardData/data/CTPPS_UFSD_Sensitive_Dets.xml
+index 1f1c9d3..019e38e 100644
+--- a/Geometry/VeryForwardData/data/CTPPS_UFSD_Sensitive_Dets.xml
++++ b/Geometry/VeryForwardData/data/CTPPS_UFSD_Sensitive_Dets.xml
+@@ -3,10 +3,14 @@
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://www.cern.ch/cms/DDL ../../DDLSchema/DDLSchema.xsd">
+     <SpecParSection label="CTPPS_UFSD_Sensitive_Dets.xml">
+-        <SpecPar name="ROUHitsCTPPSTiming">
+-            <PartSelector path="//CTPPS_UFSD_Plane"/>
++        <SpecPar name="ROUHitsCTPPSUSFD">
++
++            <PartSelector path="//CTPPS_UFSD_Pattern1:CTPPS_UFSD_Segment"/>
++            <PartSelector path="//CTPPS_UFSD_Pattern2_SegmentA:CTPPS_UFSD_Segment"/>
++            <PartSelector path="//CTPPS_UFSD_Pattern2_SegmentB:CTPPS_UFSD_Segment"/>
++
+             <Parameter name="SensitiveDetector" value="CTPPSUFSDSensitiveDetector" eval="false"/>
+-            <Parameter name="ReadOutName" value="CTPPSHitsUFSD" eval="false"/>
++            <Parameter name="ReadOutName" value="CTPPSTimingHits" eval="false"/>
+         </SpecPar>
+     </SpecParSection>
+ </DDDefinition>
+diff --git a/Geometry/VeryForwardGeometry/interface/CTPPSPixelSimTopology.h b/Geometry/VeryForwardGeometry/interface/CTPPSPixelSimTopology.h
+index 10864fa..197c70b 100644
+--- a/Geometry/VeryForwardGeometry/interface/CTPPSPixelSimTopology.h
++++ b/Geometry/VeryForwardGeometry/interface/CTPPSPixelSimTopology.h
+@@ -1,212 +1,274 @@
+-#ifndef Geometry_VeryForwardGeometry_CTPPSPixelSimTopology_h
+-#define Geometry_VeryForwardGeometry_CTPPSPixelSimTopology_h
++#ifndef Geometry_VeryForwardGeometry_CTPPSPixelSimTopology_H
++#define Geometry_VeryForwardGeometry_CTPPSPixelSimTopology_H
+ 
+ #include "TMath.h"
+ #include "Geometry/VeryForwardGeometry/interface/CTPPSPixelTopology.h"
+ 
+-class CTPPSPixelSimTopology : public CTPPSPixelTopology
++/* simX and simY are the coordinates as in the simulation: 
++   _______
++   |         |
++   |         |  y
++   |         |
++   ---------
++   x
++
++*/
++
++class pixel_info
+ {
+-  public:
+-    /* simX and simY are the coordinates as in the simulation:
+-        _________
+-       |         |
+-       |         |  y
+-       |_________|
+-
+-       x
+-    */
+-    class PixelInfo
+-    {
+-      public:
+-        PixelInfo( double lower_simX_border, double higher_simX_border, double lower_simY_border, double higher_simY_border, double eff_factor, unsigned short pixel_row_no, unsigned short pixel_col_no ) :
+-          lower_simX_border_( lower_simX_border ), higher_simX_border_( higher_simX_border ),
+-          lower_simY_border_( lower_simY_border ), higher_simY_border_( higher_simY_border ),
+-          eff_factor_( eff_factor ),
+-          pixel_row_no_( pixel_row_no ), pixel_col_no_( pixel_col_no ),
+-          pixel_index_( pixel_col_no*CTPPSPixelTopology::no_of_pixels_simX_+pixel_row_no )
+-        {}
+-
+-        inline double higherSimXBorder() const { return higher_simX_border_; }
+-        inline double lowerSimXBorder() const { return lower_simX_border_; }
+-        inline double higherSimYBorder() const { return higher_simY_border_; }
+-        inline double lowerSimYBorder() const { return lower_simY_border_; }
+-        inline double effFactor() const { return eff_factor_; }
+-        inline unsigned short pixelRowNo() const { return pixel_row_no_; }
+-        inline unsigned short pixelColNo() const { return pixel_col_no_; }
+-        inline unsigned short pixelIndex() const { return pixel_index_; }
+-
+-      private:
+-        double lower_simX_border_;
+-        double higher_simX_border_;
+-        double lower_simY_border_;
+-        double higher_simY_border_;
+-        double eff_factor_;
+-        unsigned short pixel_row_no_;
+-        unsigned short pixel_col_no_;
+-        unsigned short pixel_index_;
+-    };
+-
+-  public:
+-    CTPPSPixelSimTopology();
+-    ~CTPPSPixelSimTopology() {}
+-
+-    PixelInfo getPixelsInvolved( double x, double y, double sigma, double& hit_pos_x, double& hit_pos_y ) const;
+-
+-    inline void pixelRange( unsigned int arow, unsigned int acol, double& lower_x, double& higher_x, double& lower_y, double& higher_y ) const {
+-      // x and y in the system  of Geant4 SIMULATION
+-      arow = 159 - arow;
+-      if ( arow > 159 || acol > 155 )
+-        throw cms::Exception("CTPPSPixelSimTopology")<< "rows or columns exceeding limits";
+-
+-      // rows (x segmentation)
+-      if ( arow == 0 ) {
+-        lower_x = 0;
+-        higher_x = 0.3;
+-      }
+-      else if ( arow <= 78 ) {
+-        lower_x =  0.3 + ( arow-1 )*pitch_simX_;
+-        higher_x = 0.3 +   arow    *pitch_simX_;
+-      }
+-      else if ( arow == 79 ) {
+-        lower_x =  0.3 + ( arow-1 )*pitch_simX_;
+-        higher_x = 0.3 + ( arow+1 )*pitch_simX_;
+-      }
+-      else if ( arow == 80 ) {
+-        lower_x =  0.3 +   arow    *pitch_simX_;
+-        higher_x = 0.3 + ( arow+2 )*pitch_simX_;
+-      }
+-      else if ( arow <= 158 ) {
+-        lower_x =  0.3 + ( arow+1 )*pitch_simX_;
+-        higher_x = 0.3 + ( arow+2 )*pitch_simX_;
+-      }
+-      else if ( arow == 159) {
+-        lower_x =  0.3 + ( arow+1 )*pitch_simX_;
+-        higher_x = 0.3 + ( arow+4 )*pitch_simX_;
+-      }
+-
+-      // columns (y segmentation)
+-      if( acol == 0 ) {
+-        lower_y = 0;
+-        higher_y = 0.35;
+-      }
+-      else if ( acol <= 50 ) {
+-        lower_y =  0.35 + ( acol-1 )*pitch_simY_;
+-        higher_y = 0.35 +   acol    *pitch_simY_;
+-      }
+-      else if ( acol == 51 ) {
+-        lower_y =  0.35 + ( acol-1 )*pitch_simY_;
+-        higher_y = 0.35 + ( acol+1 )*pitch_simY_;
+-      }
+-      else if ( acol == 52 ) {
+-        lower_y =  0.35 +   acol    *pitch_simY_;
+-        higher_y = 0.35 + ( acol+2 )*pitch_simY_;
+-      }
+-      else if ( acol <= 102 ) {
+-        lower_y =  0.35 + ( acol+1 )*pitch_simY_;
+-        higher_y = 0.35 + ( acol+2 )*pitch_simY_;
+-      }
+-      else if ( acol == 103 ) {
+-        lower_y =  0.35 + ( acol+1 )*pitch_simY_;
+-        higher_y = 0.35 + ( acol+3 )*pitch_simY_;
+-      }
+-      else if ( acol == 104) {
+-        lower_y =  0.35 + ( acol+2 )*pitch_simY_;
+-        higher_y = 0.35 + ( acol+4 )*pitch_simY_;
+-      }
+-      else if ( acol <= 154 ) {
+-        lower_y =  0.35 + ( acol+3 )*pitch_simY_;
+-        higher_y = 0.35 + ( acol+4 )*pitch_simY_;
+-      }
+-      else if ( acol == 155 ) {
+-        lower_y =  0.35 + ( acol+3 )*pitch_simY_;
+-        higher_y = 0.35 + ( acol+4 )*pitch_simY_ + 0.2;
+-      }
+-
+-      lower_x = lower_x - simX_width_/2.;
+-      lower_y = lower_y - simY_width_/2.;
+-      higher_x = higher_x - simX_width_/2.;
+-      higher_y = higher_y - simY_width_/2.;
+-    }
+ 
+-  private:
+-    double active_edge_x_;
+-    double active_edge_y_;
++public:
++
++pixel_info(double lower_simX_border, double higher_simX_border, double lower_simY_border, double higher_simY_border, double eff_factor, unsigned short pixel_row_no, unsigned short pixel_col_no) : 
++  lower_simX_border_(lower_simX_border), 
++    higher_simX_border_(higher_simX_border), 
++    lower_simY_border_(lower_simY_border), 
++    higher_simY_border_(higher_simY_border), 
++    eff_factor_(eff_factor), 
++    pixel_row_no_(pixel_row_no), 
++    pixel_col_no_(pixel_col_no),
++    pixel_index_(pixel_col_no*CTPPSPixelTopology::no_of_pixels_simX_+pixel_row_no)
++    {}
++
++  inline double higherSimXBorder() const {return higher_simX_border_;}
++  inline double lowerSimXBorder() const {return lower_simX_border_;}
++  inline double higherSimYBorder() const {return higher_simY_border_;}
++  inline double lowerSimYBorder() const {return lower_simY_border_;}
++  inline double effFactor() const {return eff_factor_;}
++  inline unsigned short pixelRowNo() const {return pixel_row_no_;}
++  inline unsigned short pixelColNo() const {return pixel_col_no_;}
++  inline unsigned short pixelIndex() const {return pixel_index_;}
+     
+-    inline double activeEdgeFactor( double x, double y ) const {
+-      const double inv_sigma = 1./active_edge_sigma_; // precaching
+-      const double topEdgeFactor =    TMath::Erf( -distanceFromTopActiveEdge( x, y )   *inv_sigma )*0.5 + 0.5;
+-      const double bottomEdgeFactor = TMath::Erf( -distanceFromBottomActiveEdge( x, y )*inv_sigma )*0.5 + 0.5;
+-      const double rightEdgeFactor =  TMath::Erf( -distanceFromRightActiveEdge( x, y ) *inv_sigma )*0.5 + 0.5;
+-      const double leftEdgeFactor =   TMath::Erf( -distanceFromLeftActiveEdge( x, y )  *inv_sigma )*0.5 + 0.5;
+ 
+-      const double aEF = topEdgeFactor*bottomEdgeFactor*rightEdgeFactor*leftEdgeFactor;
++private:
+ 
+-      if ( aEF > 1. )
+-        throw cms::Exception("CTPPSPixelSimTopology")<< " active edge factor > 1";
++  double lower_simX_border_;
++  double higher_simX_border_;
++  double lower_simY_border_;
++  double higher_simY_border_;
++  double eff_factor_;
++  unsigned short pixel_row_no_;
++  unsigned short pixel_col_no_;
++  unsigned short pixel_index_;
++};
+ 
+-      return aEF;
+-    }
++class CTPPSPixelSimTopology : public CTPPSPixelTopology
++{
++
++public:
++  CTPPSPixelSimTopology();
++  ~CTPPSPixelSimTopology(){};
++
++  std::vector<pixel_info> getPixelsInvolved(double x, double y, double sigma, double &hit_pos_x, double &hit_pos_y);
+ 
+-    inline double distanceFromTopActiveEdge( double x, double y ) const { return ( y-active_edge_y_ ); }
+-    inline double distanceFromBottomActiveEdge( double x, double y ) const { return ( -y-active_edge_y_ ); }
+-    inline double distanceFromRightActiveEdge( double x, double y ) const { return ( x-active_edge_x_ ); }
+-    inline double distanceFromLeftActiveEdge( double x, double y ) const { return ( -x-active_edge_x_ ); }
++  inline void pixelRange(unsigned int arow, unsigned int acol, double &lower_x, double &higher_x, double &lower_y, double &higher_y){
++       
++// x and y in the system  of Geant4 SIMULATION
+ 
+-    inline unsigned int row( double x ) const {
+-      // x in the G4 simulation system
+-      x = x + simX_width_/2.;
++    arow = 159 - arow;
++
++    if(!(arow<=159 && acol <=155))
++      throw cms::Exception("CTPPSPixelSimTopology")<< " rows or columns exceeding limits";
+  
+-      // now x in the system centered in the bottom left corner of the sensor (sensor view, rocs behind)
+-      if ( x < 0. || x > simX_width_ )
+-        throw cms::Exception("CTPPSPixelSimTopology")<< "out of reference frame";
+-
+-      // rows (x segmentation)
+-      unsigned int arow;
+-      if      ( x <= ( dead_edge_width_+    pitch_simX_ ) ) arow = 0;
+-      else if ( x <= ( dead_edge_width_+ 79*pitch_simX_ ) ) arow = int( ( x-dead_edge_width_-pitch_simX_ )/pitch_simX_ )+1;
+-      else if ( x <= ( dead_edge_width_+ 81*pitch_simX_ ) ) arow = 79;
+-      else if ( x <= ( dead_edge_width_+ 83*pitch_simX_ ) ) arow = 80;
+-      else if ( x <= ( dead_edge_width_+162*pitch_simX_ ) ) arow = int( ( x-dead_edge_width_-pitch_simX_ )/pitch_simX_ )-1;
+-      else arow = 159;
+-
+-      arow = 159-arow;
+-      if ( arow>159 )
+-        throw cms::Exception("CTPPSPixelSimTopology")<< "row number exceeding limit";
+-
+-      return arow;
++// rows (x segmentation)
++    
++    if(arow == 0) {
++      lower_x = 0;
++      higher_x = 0.3;
++    }
++    if( arow > 0 && arow <= 78 ){
++      lower_x = 0.3 + (arow-1)*pitch_simX_;
++      higher_x = 0.3 + arow*pitch_simX_;
++    } 
++    if(arow == 79) {
++      lower_x = 0.3 + (arow-1)*pitch_simX_;
++      higher_x = 0.3 + (arow+1)*pitch_simX_;
+     }
++    if(arow == 80) {
++      lower_x = 0.3 + (arow)*pitch_simX_;
++      higher_x = 0.3 + (arow+2)*pitch_simX_;
++    }
++    if( arow > 80 && arow <= 158 ){
++      lower_x = 0.3 + (arow+1)*pitch_simX_;
++      higher_x = 0.3 + (arow+2)*pitch_simX_;
++    } 
++    if( arow == 159){
++      lower_x = 0.3 + (arow+1)*pitch_simX_;
++      higher_x = 0.3 + (arow+4)*pitch_simX_;
++    } 
++
++// columns (y segmentation)
+ 
+-    inline unsigned int col( double y ) const {
+-      // y in the G4 simulation system
+-      unsigned int column;
+-
+-      // columns (y segmentation)
+-      // now y in the system centered in the bottom left corner of the sensor (sensor view, rocs behind)
+-      y = y + simY_width_/2.;
+-      if ( y < 0. || y > simY_width_ )
+-        throw cms::Exception("CTPPSPixelSimTopology")<< " out of reference frame";
+-
+-      if      ( y <= ( dead_edge_width_+    pitch_simY_ ) ) column = 0;
+-      else if ( y <= ( dead_edge_width_+ 51*pitch_simY_ ) ) column = int( ( y-dead_edge_width_-pitch_simY_ )/pitch_simY_ )+1;
+-      else if ( y <= ( dead_edge_width_+ 53*pitch_simY_ ) ) column = 51;
+-      else if ( y <= ( dead_edge_width_+ 55*pitch_simY_ ) ) column = 52;
+-      else if ( y <= ( dead_edge_width_+105*pitch_simY_ ) ) column = int( ( y-dead_edge_width_-pitch_simY_ )/pitch_simY_ )-1;
+-      else if ( y <= ( dead_edge_width_+107*pitch_simY_ ) ) column = 103;
+-      else if ( y <= ( dead_edge_width_+109*pitch_simY_ ) ) column = 104;
+-      else if ( y <= ( dead_edge_width_+159*pitch_simY_ ) ) column = int( ( y-dead_edge_width_-pitch_simY_ )/pitch_simY_ )-3;
+-      else column = 155;
+-
+-      return column;
++    if(acol == 0) {
++      lower_y = 0;
++      higher_y = 0.35;
++    }
++    if( acol > 0 && acol <= 50 ){
++      lower_y = 0.35 + (acol-1)*pitch_simY_;
++      higher_y = 0.35 + acol*pitch_simY_;
++    } 
++    if(acol == 51) {
++      lower_y = 0.35 + (acol-1)*pitch_simY_;
++      higher_y = 0.35 + (acol+1)*pitch_simY_;
++    }
++    if(acol == 52) {
++      lower_y = 0.35 + (acol)*pitch_simY_;
++      higher_y = 0.35 + (acol+2)*pitch_simY_;
++    }
++    if( acol > 52 && acol <= 102 ){
++      lower_y = 0.35 + (acol+1)*pitch_simY_;
++      higher_y = 0.35 + (acol+2)*pitch_simY_;
++    } 
++
++    if(acol == 103) {
++      lower_y = 0.35 + (acol+1)*pitch_simY_;
++      higher_y = 0.35 + (acol+3)*pitch_simY_;
++    }
++    if(acol == 104) {
++      lower_y = 0.35 + (acol+2)*pitch_simY_;
++      higher_y = 0.35 + (acol+4)*pitch_simY_;
+     }
++    if( acol > 104 && acol <= 154 ){
++      lower_y = 0.35 + (acol+3)*pitch_simY_;
++      higher_y = 0.35 + (acol+4)*pitch_simY_;
++    } 
++    if(acol == 155) {
++      lower_y = 0.35 + (acol+3)*pitch_simY_;
++      higher_y = 0.35 + (acol+4)*pitch_simY_ + 0.2;
++    }
++ 
++    lower_x = lower_x - simX_width_/2.;
++    lower_y = lower_y - simY_width_/2.;
++    higher_x = higher_x - simX_width_/2.;
++    higher_y = higher_y - simY_width_/2.;
++
++  }
++
++private:
++  std::vector<pixel_info> theRelevantPixels_;
++
++  double active_edge_x_;
++  double active_edge_y_;
++    
++  inline double activeEdgeFactor(double x, double y)
++  {
++    double topEdgeFactor=TMath::Erf(-distanceFromTopActiveEdge(x, y)/active_edge_sigma_)/2 + 0.5;
++    double bottomEdgeFactor=TMath::Erf(-distanceFromBottomActiveEdge(x, y)/active_edge_sigma_)/2 + 0.5;
++    double rightEdgeFactor=TMath::Erf(-distanceFromRightActiveEdge(x, y)/active_edge_sigma_)/2 + 0.5;
++    double leftEdgeFactor=TMath::Erf(-distanceFromLeftActiveEdge(x, y)/active_edge_sigma_)/2 + 0.5;
++
++    double aEF = topEdgeFactor*bottomEdgeFactor*rightEdgeFactor*leftEdgeFactor;
+ 
+-    inline void rowCol2Index( unsigned int arow, unsigned int acol, unsigned int& index ) const {
+-      index = acol*no_of_pixels_simX_+arow;
++    if(aEF>1)
++      throw cms::Exception("CTPPSPixelSimTopology")<< " active edge factor > 1";
++
++    return aEF;
++  }
++     
++  inline double distanceFromTopActiveEdge(double x, double y)
++  {
++    double d=y-active_edge_y_;
++    return d;
++  }
++
++  inline double distanceFromBottomActiveEdge(double x, double y)
++  {
++    double d=-y-active_edge_y_;
++    return d;
++  }
++
++  inline double distanceFromRightActiveEdge(double x, double y)
++  {
++    double d=x-active_edge_x_;
++    return d;
++  }
++
++  inline double distanceFromLeftActiveEdge(double x, double y)
++  {
++    double d=-x-active_edge_x_;
++    return d;
++  }
++
++  inline unsigned int row(double x){
++// x in the G4 simulation system
++
++    x = x + simX_width_/2.;
++ 
++// now x in the system centered in the bottom left corner of the sensor (sensor view, rocs behind)
++    if(!(x>=0 && x<=simX_width_))
++      throw cms::Exception("CTPPSPixelSimTopology")<< " out of reference frame";
++    unsigned int arow;
++// rows (x segmentation)
++
++    if(x <= (dead_edge_width_+pitch_simX_) ) arow = 0;
++
++    if(x > (dead_edge_width_+pitch_simX_) && x <= (dead_edge_width_+79*pitch_simX_)   ){
++      arow = int((x - dead_edge_width_-pitch_simX_)/pitch_simX_)+1 ;
++    }      
++
++    if(x >  (dead_edge_width_+79*pitch_simX_) &&  x<= (dead_edge_width_+81*pitch_simX_)) arow = 79;
++
++    if(x >  (dead_edge_width_+81*pitch_simX_) &&  x<= (dead_edge_width_+83*pitch_simX_)) arow = 80;
++
++    if(x > (dead_edge_width_+83*pitch_simX_) && x <= (dead_edge_width_+162*pitch_simX_)   ){
++      arow = int((x - dead_edge_width_-pitch_simX_)/pitch_simX_)-1;
++    }      
++    if(x > (dead_edge_width_+162*pitch_simX_) ) arow = 159;
++
++    arow=159-arow;
++    if(arow>159)
++      throw cms::Exception("CTPPSPixelSimTopology")<< " row number exceeding limit";
++ 
++    return arow;
++  }
++
++  inline unsigned int col(double y){
++    unsigned int column;
++// y in the G4 simulation system
++
++// columns (y segmentation)
++// now y in the system centered in the bottom left corner of the sensor (sensor view, rocs behind)
++    y = y + simY_width_/2.;
++    if(!(y>=0 && y <=simY_width_))
++      throw cms::Exception("CTPPSPixelSimTopology")<< " out of reference frame";
++
++    if(y <= (dead_edge_width_+pitch_simY_) ) column = 0;
++
++    if(y > (dead_edge_width_+pitch_simY_) && y <= (dead_edge_width_+51*pitch_simY_)   ){
++      column = int((y - dead_edge_width_-pitch_simY_)/pitch_simY_)+1 ;
++    }      
++
++    if(y >  (dead_edge_width_+51*pitch_simY_) &&  y<= (dead_edge_width_+53*pitch_simY_)) column = 51;
++
++    if(y >  (dead_edge_width_+53*pitch_simY_) &&  y<= (dead_edge_width_+55 *pitch_simY_)) column = 52;
++
++    if(y >  (dead_edge_width_+55*pitch_simY_) &&  y<= (dead_edge_width_+105 *pitch_simY_)) {
++      column = int((y - dead_edge_width_-pitch_simY_)/pitch_simY_)-1 ;
+     }
+ 
+-    inline void index2RowCol( unsigned int& arow, unsigned int& acol, unsigned int index ) const {
+-      acol = index / no_of_pixels_simX_;
+-      arow = index % no_of_pixels_simX_;
++
++    if(y >  (dead_edge_width_+105*pitch_simY_) &&  y<= (dead_edge_width_+107*pitch_simY_)) column = 103;
++
++    if(y >  (dead_edge_width_+107*pitch_simY_) &&  y<= (dead_edge_width_+109 *pitch_simY_)) column = 104;
++
++    if(y >  (dead_edge_width_+109*pitch_simY_) &&  y<= (dead_edge_width_+159 *pitch_simY_)) {
++      column = int((y - dead_edge_width_-pitch_simY_)/pitch_simY_)-3 ;
+     }
++
++    if(y >  (dead_edge_width_+159*pitch_simY_) ) column = 155;
++
++    return column;
++  }
++
++  inline void rowCol2Index(unsigned int arow, unsigned int acol, unsigned int &index){
++    index = acol*no_of_pixels_simX_+arow;
++  }
++
++  inline void index2RowCol(unsigned int &arow, unsigned int &acol, unsigned int index){
++    acol = index / no_of_pixels_simX_ ;
++    arow = index % no_of_pixels_simX_;
++  }
++
+ };
+ 
+ #endif
+diff --git a/Geometry/VeryForwardGeometry/interface/CTPPSPixelTopology.h b/Geometry/VeryForwardGeometry/interface/CTPPSPixelTopology.h
+index 60f9f11..66ee79c 100644
+--- a/Geometry/VeryForwardGeometry/interface/CTPPSPixelTopology.h
++++ b/Geometry/VeryForwardGeometry/interface/CTPPSPixelTopology.h
+@@ -1,13 +1,13 @@
+-#ifndef Geometry_VeryForwardGeometry_CTPPSPixelTopology_h
+-#define Geometry_VeryForwardGeometry_CTPPSPixelTopology_h
++#ifndef Geometry_VeryForwardGeometry_CTPPSPixelTopology_H
++#define Geometry_VeryForwardGeometry_CTPPSPixelTopology_H
+ 
+ #include "TMath.h"
+ #include "CondFormats/CTPPSReadoutObjects/interface/CTPPSPixelIndices.h"
+-
+ /**
+  *\brief Geometrical and topological information on RPix silicon detector.
+  * Uses coordinate a frame with origin in the center of the wafer.
+  **/
++
+ class CTPPSPixelTopology
+ {
+   public:
+@@ -17,28 +17,28 @@ class CTPPSPixelTopology
+     static constexpr double pitch_simY_ = 150E-3;
+     static constexpr double pitch_simX_ = 100E-3;
+     static constexpr double thickness_ = 0.23;
+-    static constexpr unsigned short no_of_pixels_simX_ = 160;
+-    static constexpr unsigned short no_of_pixels_simY_ = 156;
+-    static constexpr unsigned short no_of_pixels_ = 160*156;
++    static constexpr unsigned short no_of_pixels_simX_ = 160;  
++    static constexpr unsigned short no_of_pixels_simY_ = 156;  
++    static constexpr unsigned short no_of_pixels_ = 160*156;  
+     static constexpr double simX_width_ = 16.6;
+     static constexpr double simY_width_ = 24.4;
+     static constexpr double dead_edge_width_ = 200E-3;
+     static constexpr double active_edge_sigma_ = 0.02;
+     static constexpr double phys_active_edge_dist_ = 0.150;
+ 
+-    inline double detPitchSimX() const { return pitch_simX_; }
+-    inline double detPitchSimY() const { return pitch_simY_; }
+-    inline double detThickness() const { return thickness_; }
+-    inline unsigned short detPixelSimXNo() const { return no_of_pixels_simX_; }
+-    inline unsigned short detPixelSimYNo() const { return no_of_pixels_simY_; }
+-    inline unsigned short detPixelNo() const { return no_of_pixels_; }
+-    inline double detXWidth() const { return simX_width_; }
+-    inline double detYWidth() const { return simY_width_; }
+-    inline double detDeadEdgeWidth() const { return dead_edge_width_; }
+-    inline double activeEdgeSigma() const { return active_edge_sigma_; }
+-    inline double physActiveEdgeDist() const { return phys_active_edge_dist_; }
++    inline double detPitchSimX() const {return pitch_simX_;}
++    inline double detPitchSimY() const {return pitch_simY_;}
++    inline double detThickness() const {return thickness_;}
++    inline unsigned short detPixelSimXNo() const {return no_of_pixels_simX_;}
++    inline unsigned short detPixelSimYNo() const {return no_of_pixels_simY_;}
++    inline unsigned short detPixelNo() const {return no_of_pixels_;}
++    inline double detXWidth() const {return simX_width_;}
++    inline double detYWidth() const {return simY_width_;}
++    inline double detDeadEdgeWidth() const {return dead_edge_width_;}
++    inline double activeEdgeSigma() const {return active_edge_sigma_;}
++    inline double physActiveEdgeDist() const {return phys_active_edge_dist_;}
+ 
+-    CTPPSPixelIndices indices_;
++    CTPPSPixelIndices indici_;    
+ };
+ 
+ #endif 
+diff --git a/Geometry/VeryForwardGeometry/src/CTPPSPixelSimTopology.cc b/Geometry/VeryForwardGeometry/src/CTPPSPixelSimTopology.cc
+index ea67c92..31c47c5 100644
+--- a/Geometry/VeryForwardGeometry/src/CTPPSPixelSimTopology.cc
++++ b/Geometry/VeryForwardGeometry/src/CTPPSPixelSimTopology.cc
+@@ -2,25 +2,28 @@
+ 
+ CTPPSPixelSimTopology::CTPPSPixelSimTopology()
+ {
+-  active_edge_x_ = simX_width_*0.5 - phys_active_edge_dist_;
+-  active_edge_y_ = simY_width_*0.5 - phys_active_edge_dist_;
++  active_edge_x_ = simX_width_/2.0 - phys_active_edge_dist_;
++  active_edge_y_ = simY_width_/2.0 - phys_active_edge_dist_;
+ }
+ 
+-CTPPSPixelSimTopology::PixelInfo
+-CTPPSPixelSimTopology::getPixelsInvolved( double x, double y, double sigma, double& hit_pos_x, double& hit_pos_y ) const
++std::vector<pixel_info> CTPPSPixelSimTopology::getPixelsInvolved(double x, double y, double sigma, double &hit_pos_x, double &hit_pos_y)
+ {
+-  //hit position wrt the bottom left corner of the sensor (-8.3, -12.2) in sensor view, rocs behind
++  theRelevantPixels_.clear();
++//hit position wrt the bottom left corner of the sensor (-8.3, -12.2) in sensor view, rocs behind
++
+   hit_pos_x = x + simX_width_/2.;
+   hit_pos_y = y + simY_width_/2.;
+-  if( !( hit_pos_x*hit_pos_y > 0 ) )
+-    throw cms::Exception("CTPPSPixelSimTopology") << "out of reference frame";
++  if(!(hit_pos_x*hit_pos_y > 0))
++    throw cms::Exception("CTPPSPixelSimTopology")<< " out of refrence frame";
+ 
+-  double hit_factor = activeEdgeFactor( x, y );
++  double hit_factor = activeEdgeFactor(x, y);
+ 
+-  unsigned int interested_row = row( x );
+-  unsigned int interested_col = col( y );
++  unsigned int interested_row = row(x);
++  unsigned int interested_col = col(y);
+   double low_pixel_range_x, high_pixel_range_x, low_pixel_range_y, high_pixel_range_y;
+-  pixelRange( interested_row, interested_col, low_pixel_range_x, high_pixel_range_x, low_pixel_range_y, high_pixel_range_y );
++  pixelRange(interested_row, interested_col, low_pixel_range_x, high_pixel_range_x, low_pixel_range_y, high_pixel_range_y);
++
++  theRelevantPixels_.push_back(pixel_info( low_pixel_range_x, high_pixel_range_x, low_pixel_range_y, high_pixel_range_y, hit_factor, interested_row, interested_col));
+ 
+-  return CTPPSPixelSimTopology::PixelInfo( low_pixel_range_x, high_pixel_range_x, low_pixel_range_y, high_pixel_range_y, hit_factor, interested_row, interested_col );
++  return theRelevantPixels_;
+ }
+diff --git a/SimG4Core/Application/plugins/OscarMTProducer.cc b/SimG4Core/Application/plugins/OscarMTProducer.cc
+index b79a7cb..55ce77c 100644
+--- a/SimG4Core/Application/plugins/OscarMTProducer.cc
++++ b/SimG4Core/Application/plugins/OscarMTProducer.cc
+@@ -86,6 +86,9 @@ OscarMTProducer::OscarMTProducer(edm::ParameterSet const & p, const OscarMTMaste
+   produces<edm::PSimHitContainer>("TotemHitsT1");
+   produces<edm::PSimHitContainer>("TotemHitsT2Gem");
+   produces<edm::PSimHitContainer>("TotemHitsRP");
++  produces<edm::PSimHitContainer>("CTPPSPixelHits");
++// produces<edm::PSimHitContainer>("CTPPSDiamondHits");
++  produces<edm::PSimHitContainer>("CTPPSTimingHits");
+   produces<edm::PSimHitContainer>("FP420SI");
+   produces<edm::PSimHitContainer>("BSCHits");
+   produces<edm::PSimHitContainer>("PLTHits");
+diff --git a/SimG4Core/Application/plugins/OscarProducer.cc b/SimG4Core/Application/plugins/OscarProducer.cc
+index 460f6ef..24702a1 100644
+--- a/SimG4Core/Application/plugins/OscarProducer.cc
++++ b/SimG4Core/Application/plugins/OscarProducer.cc
+@@ -88,6 +88,9 @@ OscarProducer::OscarProducer(edm::ParameterSet const & p)
+   produces<edm::PSimHitContainer>("TotemHitsT1");
+   produces<edm::PSimHitContainer>("TotemHitsT2Gem");
+   produces<edm::PSimHitContainer>("TotemHitsRP");
++  produces<edm::PSimHitContainer>("CTPPSPixelHits");
++  //produces<edm::PSimHitContainer>("CTPPSDiamondHits");
++  produces<edm::PSimHitContainer>("CTPPSTimingHits");
+   produces<edm::PSimHitContainer>("FP420SI");
+   produces<edm::PSimHitContainer>("BSCHits");
+   produces<edm::PSimHitContainer>("PLTHits");
+diff --git a/SimG4Core/Application/python/g4SimHits_cfi.py b/SimG4Core/Application/python/g4SimHits_cfi.py
+index 8e6d0c3..893c0ca 100644
+--- a/SimG4Core/Application/python/g4SimHits_cfi.py
++++ b/SimG4Core/Application/python/g4SimHits_cfi.py
+@@ -421,9 +421,6 @@ g4SimHits = cms.EDProducer("OscarMTProducer",
+         MouseBite        = cms.untracked.double(2.5),
+         CheckID          = cms.untracked.bool(True),
+     ),
+-    TotemSD = cms.PSet(
+-        Verbosity = cms.untracked.int32(0)
+-    ),
+     ZdcSD = cms.PSet(
+         Verbosity = cms.int32(0),
+         UseShowerLibrary = cms.bool(True),
+@@ -482,6 +479,16 @@ g4SimHits = cms.EDProducer("OscarMTProducer",
+         TimeSliceUnit   = cms.double(1),
+         IgnoreTrackID   = cms.bool(False),
+     ),
++    Totem_RP_SD = cms.PSet(
++        Verbosity = cms.int32(0)
++    ),
++    CTPPS_Diamond_SD = cms.PSet(
++        Verbosity = cms.int32(0)
++    ),
++    CTPPSSD = cms.PSet(
++        Verbosity = cms.untracked.int32(0)
++    ),
++
+ )
+ 
+ 
+diff --git a/SimGeneral/MixingModule/python/mixObjects_cfi.py b/SimGeneral/MixingModule/python/mixObjects_cfi.py
+index 22b29ec..7668d86 100644
+--- a/SimGeneral/MixingModule/python/mixObjects_cfi.py
++++ b/SimGeneral/MixingModule/python/mixObjects_cfi.py
+@@ -255,3 +255,17 @@ phase2_timing_layer.toModify( theMixObjects,
+         crossingFrames = theMixObjects.mixSH.crossingFrames + [ 'FastTimerHitsBarrel','FastTimerHitsEndcap' ]
+     )
+ )
++
++from Configuration.Eras.Modifier_ctpps_2016_cff import ctpps_2016
++ctpps_2016.toModify( theMixObjects, 
++    mixSH = dict(
++        input = theMixObjects.mixSH.input + [ cms.InputTag("g4SimHits","TotemHitsRP"),cms.InputTag("g4SimHits","CTPPSPixelHits") ],
++        subdets = theMixObjects.mixSH.subdets + [ 'TotemHitsRP', 'CTPPSPixelHits' ],
++        crossingFrames = theMixObjects.mixSH.crossingFrames + [ 'TotemHitsRP' , 'CTPPSPixelHits']
++    )   
++)
++
++        
++
++
++
+diff --git a/SimTransport/HectorProducer/BuildFile.xml b/SimTransport/HectorProducer/BuildFile.xml
+index 29b2edd..eb11265 100644
+--- a/SimTransport/HectorProducer/BuildFile.xml
++++ b/SimTransport/HectorProducer/BuildFile.xml
+@@ -3,9 +3,9 @@
+ <use   name="SimDataFormats/GeneratorProducts"/>
+ <use   name="SimDataFormats/Forward"/>
+ <use   name="SimGeneral/HepPDTRecord"/>
+-<use   name="IOMC/RandomEngine"/>
++<use   name="CTPPSTools/Utilities"/>
+ <use   name="hector"/>
+ <use   name="hepmc"/>
+ <use   name="clhep"/>
+ <use   name="root"/>
+-<flags   EDM_PLUGIN="1"/>
++<flags EDM_PLUGIN="1"/>
+diff --git a/SimTransport/HectorProducer/interface/CTPPSHector.h b/SimTransport/HectorProducer/interface/CTPPSHector.h
+index 8c19c3d..0d0a8d0 100644
+--- a/SimTransport/HectorProducer/interface/CTPPSHector.h
++++ b/SimTransport/HectorProducer/interface/CTPPSHector.h
+@@ -25,7 +25,8 @@
+ #include <string>
+ #include <map>
+ #include <cmath>
+-#include <cmath>
++#include <math.h>
++#include <tuple>
+ 
+ #include "SimTransport/HectorProducer/interface/CTPPSHectorParameters.h"
+ 
+@@ -33,6 +34,8 @@
+ #include "FWCore/Utilities/interface/Exception.h"
+ #include "FWCore/Utilities/interface/RandomNumberGenerator.h"
+ #include <CLHEP/Vector/LorentzVector.h>
++#include <CLHEP/Vector/Boost.h>
++
+ 
+ class TRandom3;
+ 
+@@ -56,8 +59,6 @@ class CTPPSHector {
+         void filterCTPPS(TRandom3*);
+ 
+         // New function to calculate the LorentzBoost 
+-        void LorentzBoost(LorentzVector& p_out, const string& frame);
+-
+         void set_BeamEnergy(double e) {fBeamEnergy=e;fBeamMomentum = sqrt(fBeamEnergy*fBeamEnergy - ProtonMassSQ);};
+ 
+         double get_BeamEnergy() {return fBeamEnergy;};
+@@ -75,6 +76,7 @@ class CTPPSHector {
+ 
+         std::vector<LHCTransportLink> & getCorrespondenceMap() { return theCorrespondenceMap; }
+ 
++        bool SetBeamLine();
+     private:
+         // Defaults
+         double lengthctpps ;
+@@ -85,18 +87,23 @@ class CTPPSHector {
+         bool m_smearE;
+         double m_sigmaSTX;
+         double m_sigmaSTY;
++        double m_sigmaSX;
++        double m_sigmaSY;
+         float m_f_ctpps_f;
+         float m_b_ctpps_b;	
+ 
+         //HECTOR CTPPS Parameters
+         bool fCrossAngleCorr;
+-        double fCrossingAngle;
++        double fCrossingAngleBeam1;
++        double fCrossingAngleBeam2;
+         double fBeamMomentum;
+         double fBeamEnergy;
+         double fVtxMeanX;
+         double fVtxMeanY;
+         double fVtxMeanZ;
+         double fMomentumMin;
++        double fBeamXatIP;
++        double fBeamYatIP;
+ 
+         edm::ESHandle < ParticleDataTable > pdt;
+ 
+diff --git a/SimTransport/HectorProducer/interface/CTPPSHectorParameters.h b/SimTransport/HectorProducer/interface/CTPPSHectorParameters.h
+index e1cd208..95359c5 100644
+--- a/SimTransport/HectorProducer/interface/CTPPSHectorParameters.h
++++ b/SimTransport/HectorProducer/interface/CTPPSHectorParameters.h
+@@ -1,6 +1,6 @@
+ #ifndef CTPPSHectorParameters_H
+ #define CTPPSHectorParameters_H
+-#include <cmath>
++#include <math.h>
+ 
+ const double   ProtonMass = 0.93827;
+ const double   ProtonMassSQ = pow(ProtonMass,2);
+diff --git a/SimTransport/HectorProducer/interface/CTPPSHectorProducer.h b/SimTransport/HectorProducer/interface/CTPPSHectorProducer.h
+index 104cd55..4f8a28b 100644
+--- a/SimTransport/HectorProducer/interface/CTPPSHectorProducer.h
++++ b/SimTransport/HectorProducer/interface/CTPPSHectorProducer.h
+@@ -30,10 +30,10 @@ class CTPPSHectorProducer : public edm::one::EDProducer<edm::one::SharedResource
+ {
+     public:
+         explicit CTPPSHectorProducer(edm::ParameterSet const & p);    //!< default constructor
+-        ~CTPPSHectorProducer() override;   //!< default destructor
+-        void beginRun(const edm::Run & r,const edm::EventSetup& c) override;
+-        void endRun(const edm::Run & r,const edm::EventSetup& c) override;
+-        void produce(edm::Event & e, const edm::EventSetup & c)  override;
++        virtual ~CTPPSHectorProducer();   //!< default destructor
++        virtual void beginRun(const edm::Run & r,const edm::EventSetup& c) override;
++        virtual void endRun(const edm::Run & r,const edm::EventSetup& c) override;
++        virtual void produce(edm::Event & e, const edm::EventSetup & c)  override;
+     private:
+         //HepMC::GenEvent * evt_;
+         CTPPSHector * hector_ctpps;
+diff --git a/SimTransport/HectorProducer/interface/HectorProducer.h b/SimTransport/HectorProducer/interface/HectorProducer.h
+index afdc6fb..0bb3895 100644
+--- a/SimTransport/HectorProducer/interface/HectorProducer.h
++++ b/SimTransport/HectorProducer/interface/HectorProducer.h
+@@ -28,10 +28,10 @@ class HectorProducer : public edm::one::EDProducer<edm::one::SharedResources, ed
+ {
+  public:
+   explicit HectorProducer(edm::ParameterSet const & p);  
+-  ~HectorProducer() override;  
+-  void beginRun(const edm::Run & r,const edm::EventSetup& c) override;
+-  void endRun(const edm::Run & r,const edm::EventSetup& c) override;
+-  void produce(edm::Event & e, const edm::EventSetup& c) override;
++  virtual ~HectorProducer();  
++  virtual void beginRun(const edm::Run & r,const edm::EventSetup& c) override;
++  virtual void endRun(const edm::Run & r,const edm::EventSetup& c) override;
++  virtual void produce(edm::Event & e, const edm::EventSetup& c) override;
+ 
+  private:
+ 
+diff --git a/SimTransport/HectorProducer/python/FastSimWithCTPPS_cff.py b/SimTransport/HectorProducer/python/FastSimWithCTPPS_cff.py
+index ee742e7..2ae9291 100644
+--- a/SimTransport/HectorProducer/python/FastSimWithCTPPS_cff.py
++++ b/SimTransport/HectorProducer/python/FastSimWithCTPPS_cff.py
+@@ -39,11 +39,10 @@ def customise(process):
+ 	# output
+     	outputModule = None
+     	outdict = process.outputModules_()
+-    	if "AODSIMoutput" in outdict:
+-	    process.AODSIMoutput.outputCommands.extend(cms.untracked.vstring('keep *_CTPPSSimHits_*_*','keep *_CTPPSFastRecHits_*_*'
+-,'keep *_CTPPSFastTracks_*_*'))
++    	if outdict.has_key("AODSIMoutput"):
++	    process.AODSIMoutput.outputCommands.extend(cms.untracked.vstring('keep *_CTPPSSimHits_*_*','keep *_CTPPSFastRecHits_*_*','keep *_CTPPSFastTracks_*_*'))
+ 	    process.reconstruction_step.replace(process.reconstruction,process.reconstruction*process.CTPPSFastRecHits*process.CTPPSFastTracks) 	
+-    	elif "FASTPUoutput" in outdict:
++    	elif outdict.has_key("FASTPUoutput"):
+ 	    process.FASTPUoutput.outputCommands.extend(cms.untracked.vstring('keep *_CTPPSSimHits_*_*')) 	
+ 			
+ 	
+diff --git a/SimTransport/HectorProducer/python/HectorTransportCTPPS_cfi.py b/SimTransport/HectorProducer/python/HectorTransportCTPPS_cfi.py
+index b8a07bc..9f9a9be 100644
+--- a/SimTransport/HectorProducer/python/HectorTransportCTPPS_cfi.py
++++ b/SimTransport/HectorProducer/python/HectorTransportCTPPS_cfi.py
+@@ -1,31 +1,22 @@
+ import FWCore.ParameterSet.Config as cms
+ 
+ from SimG4Core.Application.hectorParameter_cfi import *
++
++from SimTransport.HectorProducer.CTPPSOpticsParameters_cfi import *
++
+ LHCTransport = cms.EDProducer("CTPPSHectorProducer",
+     HepMCProductLabel = cms.string('generatorSmeared'),  ## HepMC source to be processed
+     CTPPSTransport = cms.bool(True), 
+     Verbosity = cms.bool(False),
+     CTPPSHector = cms.PSet(
+         HectorEtaCut,
+-        Beam1 = cms.string('SimTransport/HectorProducer/data/LHCB1_Beta0.60_6.5TeV_CR142.5_v6.503.tfs'),
+-        Beam2 = cms.string('SimTransport/HectorProducer/data/LHCB2_Beta0.60_6.5TeV_CR142.5_v6.503.tfs'),
+-        CrossingAngle  = cms.double(142.5), #in mrad
++        Validated_PreTS2_2016,
+         BeamLineLengthCTPPS = cms.double(250.0),
+-	    CTPPSf = cms.double(203.827),    ##in meters
+-        CTPPSb = cms.double(203.827),    ##in meters
++        CTPPSf = cms.double(212.55),    ##in meters
++        CTPPSb = cms.double(212.55),    ##in meters
+         smearEnergy = cms.bool(True),       ## if False: no Energy smearing(i.e. sigmaEnergy =0.0)
+-        sigmaEnergy = cms.double(1.11e-4),     ## beam energy dispersion (GeV); if =0.0 the default(=0.79) is used
+         smearAng = cms.bool(True),       ## if False: no Angle smearing(i.e. sigmaSTX(Y) =0.0)
+-        sigmaSTX = cms.double(30.03),     ## x angle dispersion at IP (urad); if =0.0 the default(=30.23) is used
+-        sigmaSTY = cms.double(30.03),      ## y angle dispersion at IP (urad); if =0.0 the default(=30.23) is used
+         CrossAngleCorr = cms.bool(True),
+-        BeamEnergy = cms.double(6500.0),
+-        VtxMeanX       = cms.double(0.10482),
+-        VtxMeanY       = cms.double(0.16867),
+-        VtxMeanZ       = cms.double(-1.0985),
+-        MomentumMin = cms.double(3.000)		
++        MomentumMin = cms.double(3.000),	
+     )
+ )
+-
+-
+-
+diff --git a/SimTransport/HectorProducer/python/HectorTransport_cfi.py b/SimTransport/HectorProducer/python/HectorTransport_cfi.py
+index bc85c3e..dcb68b3 100644
+--- a/SimTransport/HectorProducer/python/HectorTransport_cfi.py
++++ b/SimTransport/HectorProducer/python/HectorTransport_cfi.py
+@@ -19,7 +19,9 @@ LHCTransport = cms.EDProducer("HectorProducer",
+         sigmaEnergy = cms.double(0.0),     ## beam energy dispersion (GeV); if =0.0 the default(=0.79) is used
+         smearAng = cms.bool(True),       ## if False: no Angle smearing(i.e. sigmaSTX(Y) =0.0)
+         sigmaSTX = cms.double(0.0),     ## x angle dispersion at IP (urad); if =0.0 the default(=30.23) is used
+-        sigmaSTY = cms.double(0.0)      ## y angle dispersion at IP (urad); if =0.0 the default(=30.23) is used
++        sigmaSTY = cms.double(0.0),      ## y angle dispersion at IP (urad); if =0.0 the default(=30.23) is used
++        sigmaSX = cms.double(12.01),     ## x dispersion at IP (um); sqrt(emittance*beta_x*)
++        sigmaSY = cms.double(12.01)      ## y dispersion at IP (um); 
+     )
+ )
+ 
+diff --git a/SimTransport/HectorProducer/src/CTPPSHector.cc b/SimTransport/HectorProducer/src/CTPPSHector.cc
+index 4d35513..d781b78 100644
+--- a/SimTransport/HectorProducer/src/CTPPSHector.cc
++++ b/SimTransport/HectorProducer/src/CTPPSHector.cc
+@@ -9,17 +9,22 @@
+ #include "HepMC/SimpleVector.h"
+ 
+ #include "CLHEP/Random/RandGauss.h"
++#include "CTPPSTools/Utilities/interface/CTPPSUtilities.h"
+ 
+ #include "TRandom3.h"
+-#include <TMatrixD.h>
++#include <TMath.h>
+ 
+ #include "H_Parameters.h"
++#include "H_RecRPObject.h"
++
++#include <math.h>
++#include <iomanip>
++#include <cstdlib>
+ 
+-#include <cmath>
+ 
+ CTPPSHector::CTPPSHector(const edm::ParameterSet & param, bool verbosity,bool CTPPSTransport) : 
+-    m_smearAng(false),m_sig_e(0.),m_smearE(false),m_sigmaSTX(0.),m_sigmaSTY(0.),
+-    fCrossAngleCorr(false),fCrossingAngle(0.),fBeamMomentum(0),fBeamEnergy(0),
++    m_smearAng(false),m_sig_e(0.),m_smearE(false),m_sigmaSTX(0.),m_sigmaSTY(0.),m_sigmaSX(0.),m_sigmaSY(0.),
++    fCrossAngleCorr(false),fCrossingAngleBeam1(0.),fCrossingAngleBeam2(0.),fBeamMomentum(0),fBeamEnergy(0),
+     fVtxMeanX(0.),fVtxMeanY(0.),fVtxMeanZ(0.),fMomentumMin(0.),
+     m_verbosity(verbosity), 
+     m_CTPPSTransport(CTPPSTransport),NEvent(0)
+@@ -38,60 +43,34 @@ CTPPSHector::CTPPSHector(const edm::ParameterSet & param, bool verbosity,bool CT
+     m_smearAng      = hector_par.getParameter<bool>("smearAng");
+     m_sigmaSTX      = hector_par.getParameter<double>("sigmaSTX" );
+     m_sigmaSTY      = hector_par.getParameter<double>("sigmaSTY" );
++    m_sigmaSX       = hector_par.getParameter<double>("sigmaSX");
++    m_sigmaSY       = hector_par.getParameter<double>("sigmaSY");
+     m_smearE        = hector_par.getParameter<bool>("smearEnergy");
+     m_sig_e         = hector_par.getParameter<double>("sigmaEnergy");
+     etacut          = hector_par.getParameter<double>("EtaCutForHector" );
+     //CTPPS
+     fCrossAngleCorr = hector_par.getParameter<bool>("CrossAngleCorr");
+-    fCrossingAngle  = hector_par.getParameter<double>("CrossingAngle");
++    fCrossingAngleBeam1  = hector_par.getParameter<double>("CrossingAngleBeam1");
++    fCrossingAngleBeam2  = hector_par.getParameter<double>("CrossingAngleBeam2");
+     fBeamEnergy     = hector_par.getParameter<double>("BeamEnergy"); // beam energy in GeV
+     fVtxMeanX       = hector_par.getParameter<double>("VtxMeanX");
+     fVtxMeanY       = hector_par.getParameter<double>("VtxMeanY");
+     fVtxMeanZ       = hector_par.getParameter<double>("VtxMeanZ");
+     fMomentumMin    = hector_par.getParameter<double>("MomentumMin"); 
++    fBeamXatIP      = hector_par.getParameter<double>("BeamXatIP"); // position in mm
++    fBeamYatIP      = hector_par.getParameter<double>("BeamYatIP"); // position in mm
+ 
+-    theCorrespondenceMap.clear();
++    fBeamMomentum = sqrt(fBeamEnergy*fBeamEnergy - ProtonMassSQ);
+ 
+-    if(m_verbosity) {
+-        edm::LogInfo("CTPPSHectorSetup") << "===================================================================\n"  
+-            << " * * * * * * * * * * * * * * * * * * * * * * * * * * * *           \n"  
+-            << " *                                                         *       \n"  
+-            << " *                   --<--<--  A fast simulator --<--<--     *     \n"  
+-            << " *                 | --<--<--     of particle   --<--<--     *     \n"  
+-            << " *  ----HECTOR----<                                          *     \n"  
+-            << " *                 | -->-->-- transport through-->-->--      *     \n"   
+-            << " *                   -->-->-- generic beamlines -->-->--     *     \n"  
+-            << " *                                                           *     \n"   
+-            << " * JINST 2:P09005 (2007)                                     *     \n"  
+-            << " *      X Rouby, J de Favereau, K Piotrzkowski (CP3)         *     \n"  
+-            << " *       http://www.fynu.ucl.ac.be/hector.html               *     \n"  
+-            << " *                                                           *     \n"  
+-            << " * Center for Cosmology, Particle Physics and Phenomenology  *     \n"  
+-            << " *              Universite catholique de Louvain             *     \n"  
+-            << " *                 Louvain-la-Neuve, Belgium                 *     \n"  
+-            << " *                                                         *       \n"  
+-            << " * * * * * * * * * * * * * * * * * * * * * * * * * * * *           \n"   
+-            << " CTPPSHector configuration: \n" 
+-            << " m_CTPPSTransport   = " << m_CTPPSTransport << "\n"
+-            << " lengthctpps      = " << lengthctpps << "\n"
+-            << " m_f_ctpps_f      =  " << m_f_ctpps_f << "\n"
+-            << " m_b_ctpps_b      =  " << m_b_ctpps_b << "\n"
+-            << "===================================================================\n";
+-    }  
+-    edm::FileInPath b1(beam1filename.c_str());
+-    edm::FileInPath b2(beam2filename.c_str());
++    theCorrespondenceMap.clear();
++    
++    CTPPSTools::fBeamMomentum=fBeamMomentum;
++    CTPPSTools::fBeamEnergy=fBeamEnergy;
++    CTPPSTools::fCrossingAngleBeam1=-fCrossingAngleBeam1;
++    CTPPSTools::fCrossingAngleBeam2=-fCrossingAngleBeam2;
+ 
+     // construct beam line for CTPPS (forward 1 backward 2):                                                                                           
+-    if(m_CTPPSTransport && lengthctpps>0. ) {
+-        m_beamlineCTPPS1 = std::unique_ptr<H_BeamLine>(new H_BeamLine( -1, lengthctpps + 0.1 )); // (direction, length)
+-        m_beamlineCTPPS2 = std::unique_ptr<H_BeamLine>(new H_BeamLine( 1, lengthctpps + 0.1 )); //
+-        m_beamlineCTPPS1->fill( b2.fullPath(), 1, "IP5" );
+-        m_beamlineCTPPS2->fill( b1.fullPath(), 1, "IP5" );
+-        m_beamlineCTPPS1->offsetElements( 120, 0.097 );
+-        m_beamlineCTPPS2->offsetElements( 120, 0.097 );
+-        m_beamlineCTPPS1->calcMatrix();
+-        m_beamlineCTPPS2->calcMatrix();
+-    } else {
++    if(!SetBeamLine()) {
+         if ( m_verbosity ) LogDebug("CTPPSHectorSetup") << "CTPPSHector: WARNING: lengthctpps=  " << lengthctpps;
+     } 
+ }
+@@ -122,7 +101,7 @@ void CTPPSHector::clear(){
+ 
+ void CTPPSHector::add( const HepMC::GenEvent * evt ,const edm::EventSetup & iSetup, CLHEP::HepRandomEngine * engine) {
+ 
+-    H_BeamParticle* h_p  = nullptr;
++    H_BeamParticle* h_p  = NULL;
+     unsigned int line;
+ 
+     for (HepMC::GenEvent::particle_const_iterator eventParticle =evt->particles_begin();
+@@ -154,30 +133,34 @@ void CTPPSHector::add( const HepMC::GenEvent * evt ,const edm::EventSetup & iSet
+ 
+                     e = sqrt(pow(mass,2)+pow(px,2)+pow(py,2)+pow(pz,2));
+ 
++                    TXforPosition=0.;
++                    TYforPosition=0.;
++
+                     // Apply Beam and Crossing Angle Corrections
+                     LorentzVector p_out(px,py,pz,e);
+                     ApplyBeamCorrection(p_out, engine);
+-                    if (fCrossAngleCorr) LorentzBoost(const_cast<LorentzVector&>(p_out),"LAB");
++                    CTPPSTools::LorentzBoost(p_out,"LAB");
+ 
+                     // from mm to cm        
+                     double XforPosition = (*eventParticle)->production_vertex()->position().x()/cm;//cm
+                     double YforPosition = (*eventParticle)->production_vertex()->position().y()/cm;//cm
+                     double ZforPosition = (*eventParticle)->production_vertex()->position().z()/cm;//cm
+ 
+-                    if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") << " fVtxMeanX: " << fVtxMeanX << " fVtxMeanY: " << fVtxMeanY << " fVtxMeanZ: "  << fVtxMeanZ ;
+-                    // It is important to set the Position before the 4Momentum otherwise HECTOR resets variables
+-                    h_p->setPosition(-(XforPosition-fVtxMeanX)*cm_to_um,(YforPosition-fVtxMeanY)*cm_to_um,TXforPosition,TYforPosition,-(ZforPosition)*cm_to_m);
+-                    
+-                    h_p->set4Momentum( -p_out.px(), p_out.py(), -p_out.pz(), p_out.e() );
++                    if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") <<
++                                    " fVtxMeanX: " << fVtxMeanX << " fVtxMeanY: " << fVtxMeanY << " fVtxMeanZ: "  << fVtxMeanZ ;
+ 
++                    int direction=(pz>0)?1:-1;
++
++                    h_p->set4Momentum(-direction*p_out.px(), p_out.py(), abs(p_out.pz()), p_out.e());
++                    h_p->setPosition(-direction*((XforPosition-fVtxMeanX)*cm_to_um+fBeamXatIP*mm_to_um),(YforPosition-fVtxMeanY)*cm_to_um+fBeamYatIP*mm_to_um,
++                                        h_p->getTX()+TXforPosition,h_p->getTY()+TYforPosition,-direction*(ZforPosition-fVtxMeanZ)*cm_to_m);
++                    
+                     m_beamPart[line] = h_p;
+                     m_direct[line] = 0;
+                     m_direct[line] = ( pz > 0 ) ? 1 : -1;
+-
+-                    m_eta[line] = (*eventParticle)->momentum().eta();
++                    m_eta[line] = p_out.eta();
+                     m_pdg[line] = (*eventParticle)->pdg_id();
+-                    m_pz[line]  = (*eventParticle)->momentum().pz();
+-
++                    m_pz[line]  = p_out.pz();
+                     if(m_verbosity) { 
+                         LogDebug("CTPPSHectorEventProcessing") << "CTPPSHector:add: barcode = " << line 
+                             << " status = " << g->status() 
+@@ -197,7 +180,7 @@ void CTPPSHector::add( const HepMC::GenEvent * evt ,const edm::EventSetup & iSet
+ void CTPPSHector::filterCTPPS(TRandom3* rootEngine){
+ 
+     unsigned int line;
+-    H_BeamParticle * part = nullptr;
++    H_BeamParticle * part = NULL;
+  
+     std::map< unsigned int, H_BeamParticle* >::iterator it;
+ 
+@@ -207,7 +190,7 @@ void CTPPSHector::filterCTPPS(TRandom3* rootEngine){
+     float x1_ctpps;
+     float y1_ctpps;
+ 
+-    if ( !m_beamPart.empty() && lengthctpps>0. ) {
++    if ( m_beamPart.size() && lengthctpps>0. ) {
+ 
+         for (it = m_beamPart.begin(); it != m_beamPart.end(); ++it ) {
+             line = (*it).first;
+@@ -216,19 +199,21 @@ void CTPPSHector::filterCTPPS(TRandom3* rootEngine){
+             if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") << "CTPPSHector:filterCTPPS: barcode = " << line;
+             if ( (*m_isCharged.find( line )).second ) {
+                 direction = (*m_direct.find( line )).second;
+-                if ( direction == 1 && m_beamlineCTPPS1 != nullptr ) {
++                if ( direction == 1 && m_beamlineCTPPS1 != 0 ) {
+                     
+  		    part->computePath(&*m_beamlineCTPPS1);
+ 
+                     is_stop = part->stopped(&* m_beamlineCTPPS1 );
+-                    if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") << "CTPPSHector:filterCTPPS: barcode = " << line << " positive is_stop=  "<< is_stop;
++                    if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") << 
++                                    "CTPPSHector:filterCTPPS: barcode = " << line << " positive is_stop=  "<< is_stop;
+                 }
+-                else if ( direction == -1 && m_beamlineCTPPS2 != nullptr ){
++                else if ( direction == -1 && m_beamlineCTPPS2 != 0 ){
+ 
+-                    part->computePath(&*m_beamlineCTPPS2 );
++                    part->computePath(&*m_beamlineCTPPS2);
+ 
+                     is_stop = part->stopped(&*m_beamlineCTPPS2 );
+-                    if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") << "CTPPSHector:filterCTPPS: barcode = " << line << " negative is_stop=  "<< is_stop;
++                    if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") << 
++                                    "CTPPSHector:filterCTPPS: barcode = " << line << " negative is_stop=  "<< is_stop;
+                 }
+                 else {
+                     is_stop = true;
+@@ -237,18 +222,19 @@ void CTPPSHector::filterCTPPS(TRandom3* rootEngine){
+ 
+                 //propagating
+                 m_isStoppedctpps[line] = is_stop;
+-                if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") << "CTPPSHector:filterCTPPS: barcode = " << line << " isStopped=" << (*m_isStoppedctpps.find(line)).second;
++                if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") << 
++                                "CTPPSHector:filterCTPPS: barcode = " << line << " isStopped=" << (*m_isStoppedctpps.find(line)).second;
+ 
+                 if (!is_stop) {
+                     if ( direction == 1 ) part->propagate( m_f_ctpps_f ); 
+                     if ( direction == -1 ) part->propagate( m_b_ctpps_b );  
+-                    x1_ctpps = -part->getX()/millimeter;
++                    x1_ctpps = part->getX()/millimeter;
+                     y1_ctpps = part->getY()/millimeter;
+-                    if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") << "CTPPSHector:filterCTPPS: barcode = " << line << " x=  "<< x1_ctpps <<" y= " << y1_ctpps;
+-
+-                    m_xAtTrPoint[line]  = x1_ctpps;
++                    if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") << 
++                                   "CTPPSHector:filterCTPPS: barcode = " << line << " x=  "<< x1_ctpps <<" y= " << y1_ctpps;
++                    m_xAtTrPoint[line]  = direction*x1_ctpps;
+                     m_yAtTrPoint[line]  = y1_ctpps;
+-                    m_TxAtTrPoint[line] = -part->getTX();
++                    m_TxAtTrPoint[line] = direction*part->getTX(); // needs to be reflected due to the way phi is calculated here
+                     m_TyAtTrPoint[line] = part->getTY();
+                     m_eAtTrPoint[line]  = part->getE();
+ 
+@@ -256,7 +242,8 @@ void CTPPSHector::filterCTPPS(TRandom3* rootEngine){
+             }// if isCharged
+             else {
+                 m_isStoppedctpps[line] = true;// imply that neutral particles stopped to reach 420m
+-                if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") << "CTPPSHector:filterCTPPS: barcode = " << line << " isStopped=" << (*m_isStoppedctpps.find(line)).second;
++                if(m_verbosity) LogDebug("CTPPSHectorEventProcessing") << 
++                                "CTPPSHector:filterCTPPS: barcode = " << line << " isStopped=" << (*m_isStoppedctpps.find(line)).second;
+             }
+ 
+         } // for (it = m_beamPart.begin(); it != m_beamPart.end(); it++ ) 
+@@ -281,65 +268,28 @@ void CTPPSHector::print() const {
+ void CTPPSHector::ApplyBeamCorrection(LorentzVector& p_out, CLHEP::HepRandomEngine* engine)
+ {
+ 
+-    double microrad = 1.e-6;
+-    double theta = p_out.theta(); if (p_out.pz()<0) theta=CLHEP::pi-theta;
+-    double dtheta_x = (double)(m_smearAng)?CLHEP::RandGauss::shoot(engine,0.,m_sigmaSTX):0;
+-    double dtheta_y = (double)(m_smearAng)?CLHEP::RandGauss::shoot(engine,0.,m_sigmaSTY):0;
+-    double denergy  = (double)(m_smearE)?CLHEP::RandGauss::shoot(engine,0.,m_sig_e):0.;
++    double theta  = p_out.theta();
++    double thetax = atan(p_out.px()/abs(p_out.pz()));
++    double thetay = atan(p_out.py()/abs(p_out.pz()));
++    double energy = p_out.e();
+ 
+-    double p = sqrt((p_out.px())*(p_out.px())+(p_out.py())*(p_out.py())+(p_out.pz())*(p_out.pz()));
+-    double px = p*sin(theta+dtheta_x*microrad)*cos(p_out.phi());
+-    double py = p*sin(theta+dtheta_y*microrad)*sin(p_out.phi());
+-    double pz = p*(cos(theta)+denergy);
++    int direction = (p_out.pz()>0)?1:-1;
+ 
+-    if (p_out.pz()<0) pz*=-1;
++    if (p_out.pz()<0) theta=CLHEP::pi-theta;
+ 
+-    double e  = sqrt(px*px+py*py+pz*pz+ProtonMassSQ);
+-    p_out.setPx(px);
+-    p_out.setPy(py);
+-    p_out.setPz(pz);
+-    p_out.setE(e);
++    double dtheta_x = (double)(m_smearAng)?CLHEP::RandGauss::shoot(engine,0.,m_sigmaSTX):0;
++    double dtheta_y = (double)(m_smearAng)?CLHEP::RandGauss::shoot(engine,0.,m_sigmaSTY):0;
++    double denergy  = (double)(m_smearE)?CLHEP::RandGauss::shoot(engine,0.,m_sig_e):0.;
+ 
+-}
++    double s_theta = sqrt(pow(thetax+dtheta_x*urad,2)+pow(thetay+dtheta_y*urad,2)); 
++    double s_phi = atan2(thetay+dtheta_y*urad,thetax+dtheta_x*urad);
++    energy+=denergy;
++    double p = sqrt(pow(energy,2)-ProtonMassSQ);
+ 
+-void CTPPSHector::LorentzBoost(LorentzVector& p_out, const string& frame)
+-{
+-    // Use a matrix
+-    double microrad = 1.e-6;
+-    TMatrixD tmpboost(4,4);
+-    double alpha_ = 0.;
+-    double phi_  = fCrossingAngle*microrad;
+-    if (p_out.pz()<0) phi_*=-1;
+-    tmpboost(0,0) = 1./cos(phi_);
+-    tmpboost(0,1) = - cos(alpha_)*sin(phi_);
+-    tmpboost(0,2) = - tan(phi_)*sin(phi_);
+-    tmpboost(0,3) = - sin(alpha_)*sin(phi_);
+-    tmpboost(1,0) = - cos(alpha_)*tan(phi_);
+-    tmpboost(1,1) = 1.;
+-    tmpboost(1,2) = cos(alpha_)*tan(phi_);
+-    tmpboost(1,3) = 0.;
+-    tmpboost(2,0) = 0.;
+-    tmpboost(2,1) = - cos(alpha_)*sin(phi_);
+-    tmpboost(2,2) = cos(phi_);
+-    tmpboost(2,3) = - sin(alpha_)*sin(phi_);
+-    tmpboost(3,0) = - sin(alpha_)*tan(phi_);
+-    tmpboost(3,1) = 0.;
+-    tmpboost(3,2) = sin(alpha_)*tan(phi_);
+-    tmpboost(3,3) = 1.;
+-
+-    if(frame=="LAB") tmpboost.Invert();
+-
+-    TMatrixD p4(4,1);
+-    p4(0,0) = p_out.e();
+-    p4(1,0) = p_out.px();
+-    p4(2,0) = p_out.py();
+-    p4(3,0) = p_out.pz();
+-    TMatrixD p4lab(4,1);
+-    p4lab = tmpboost * p4;
+-    p_out.setPx(p4lab(1,0));
+-    p_out.setPy(p4lab(2,0));
+-    p_out.setPz(p4lab(3,0));
+-    p_out.setE(p4lab(0,0));
++    p_out.setPx((double)p*sin(s_theta)*cos(s_phi));
++    p_out.setPy((double)p*sin(s_theta)*sin(s_phi));
++    p_out.setPz((double)p*(cos(s_theta))*direction);
++    p_out.setE(energy);
+ }
+ 
+ HepMC::GenEvent * CTPPSHector::addPartToHepMC( HepMC::GenEvent * evt ){
+@@ -349,7 +299,7 @@ HepMC::GenEvent * CTPPSHector::addPartToHepMC( HepMC::GenEvent * evt ){
+     unsigned int line;
+ 
+     HepMC::GenParticle * gpart;
+-    long double tx,ty,theta,fi,energy,time = 0;
++    double tx,ty,theta,fi,energy,time = 0;
+     std::map< unsigned int, H_BeamParticle* >::iterator it;
+ 
+     for (it = m_beamPart.begin(); it != m_beamPart.end(); ++it ) {
+@@ -367,7 +317,7 @@ HepMC::GenEvent * CTPPSHector::addPartToHepMC( HepMC::GenEvent * evt ){
+                 ty     = (*m_TyAtTrPoint.find(line)).second / 1000000.;
+                 theta  = sqrt((tx*tx) + (ty*ty));
+                 double ddd = 0.;
+-                long double fi_  = 0.; 
++                double fi_  = 0.; 
+                 if ( !((*m_isStoppedctpps.find(line)).second)) {
+                     if( (*m_direct.find( line )).second >0 ) {
+                         ddd = m_f_ctpps_f;
+@@ -429,3 +379,60 @@ HepMC::GenEvent * CTPPSHector::addPartToHepMC( HepMC::GenEvent * evt ){
+ 
+     return evt;
+ } 
++bool CTPPSHector::SetBeamLine()
++{
++    edm::FileInPath b1(beam1filename.c_str());
++    edm::FileInPath b2(beam2filename.c_str());
++    if(m_verbosity) {
++        edm::LogInfo("CTPPSHectorSetup") << "===================================================================\n"  
++            << " * * * * * * * * * * * * * * * * * * * * * * * * * * * *           \n"  
++            << " *                                                         *       \n"  
++            << " *                   --<--<--  A fast simulator --<--<--     *     \n"  
++            << " *                 | --<--<--     of particle   --<--<--     *     \n"  
++            << " *  ----HECTOR----<                                          *     \n"  
++            << " *                 | -->-->-- transport through-->-->--      *     \n"   
++            << " *                   -->-->-- generic beamlines -->-->--     *     \n"  
++            << " *                                                           *     \n"   
++            << " * JINST 2:P09005 (2007)                                     *     \n"  
++            << " *      X Rouby, J de Favereau, K Piotrzkowski (CP3)         *     \n"  
++            << " *       http://www.fynu.ucl.ac.be/hector.html               *     \n"  
++            << " *                                                           *     \n"  
++            << " * Center for Cosmology, Particle Physics and Phenomenology  *     \n"  
++            << " *              Universite catholique de Louvain             *     \n"  
++            << " *                 Louvain-la-Neuve, Belgium                 *     \n"  
++            << " *                                                         *       \n"  
++            << " * * * * * * * * * * * * * * * * * * * * * * * * * * * *           \n"   
++            << " CTPPSHector configuration: \n" 
++            << " m_CTPPSTransport   = " << m_CTPPSTransport << "\n"
++            << " lengthctpps      = " << lengthctpps << "\n"
++            << " m_f_ctpps_f      =  " << m_f_ctpps_f << "\n"
++            << " m_b_ctpps_b      =  " << m_b_ctpps_b << "\n"
++            << "===================================================================\n";
++    }  
++    m_beamlineCTPPS1=NULL;
++    m_beamlineCTPPS2=NULL;
++
++    // construct beam line for CTPPS (forward 1 backward 2):                                                                                           
++    if(m_CTPPSTransport && lengthctpps>0. ) {
++        m_beamlineCTPPS1 = std::unique_ptr<H_BeamLine>(new H_BeamLine(-1, lengthctpps + 0.1 )); // (direction, length)
++        m_beamlineCTPPS1->fill( b2.fullPath(), 1, "IP5");
++        m_beamlineCTPPS2 = std::unique_ptr<H_BeamLine>(new H_BeamLine( 1, lengthctpps + 0.1 )); //
++        m_beamlineCTPPS2->fill( b1.fullPath(), 1, "IP5");
++        //m_beamlineCTPPS1->offsetElements( 120, 0.097 );
++        //m_beamlineCTPPS2->offsetElements( 120,-0.097 );
++    }
++    else {
++        if ( m_verbosity ) LogDebug("CTPPSHectorSetup") << "CTPPSHector: WARNING: lengthctpps=  " << lengthctpps;        
++        return false;
++    }
++    //if (m_verbosity) {
++          std::cout  << "====================================================================\n"
++                     << "                  Forward beam line elements \n";
++          m_beamlineCTPPS1->showElements();
++          std::cout << "====================================================================\n"
++                    << "                 Backward beam line elements \n";
++          m_beamlineCTPPS2->showElements();
++    //}
++
++    return true;
++}
+diff --git a/SimTransport/HectorProducer/src/CTPPSHectorProducer.cc b/SimTransport/HectorProducer/src/CTPPSHectorProducer.cc
+index 5e8261e..11a6e83 100644
+--- a/SimTransport/HectorProducer/src/CTPPSHectorProducer.cc
++++ b/SimTransport/HectorProducer/src/CTPPSHectorProducer.cc
+@@ -63,6 +63,7 @@ void CTPPSHectorProducer::produce(edm::Event & iEvent, const edm::EventSetup & e
+ 
+     using namespace edm;
+     using namespace std;
++    //hector_ctpps->SetBeamLine();
+     HepMC::GenEvent * evt_;
+     edm::Service<edm::RandomNumberGenerator> rng;
+     CLHEP::HepRandomEngine* engine = &rng->getEngine(iEvent.streamID());
+@@ -115,6 +116,6 @@ void CTPPSHectorProducer::produce(edm::Event & iEvent, const edm::EventSetup & e
+ 
+     iEvent.put(std::move(NewCorrespondenceMap));
+     hector_ctpps->clear();
+-
++    //hector_ctpps->DelBeamLine();
+ }
+ DEFINE_FWK_MODULE (CTPPSHectorProducer);
+diff --git a/SimTransport/HectorProducer/src/Hector.cc b/SimTransport/HectorProducer/src/Hector.cc
+index 75243a1..c0e10cf 100644
+--- a/SimTransport/HectorProducer/src/Hector.cc
++++ b/SimTransport/HectorProducer/src/Hector.cc
+@@ -12,7 +12,7 @@
+ 
+ #include "H_Parameters.h"
+ 
+-#include <cmath>
++#include <math.h>
+ 
+ Hector::Hector(const edm::ParameterSet & param, bool verbosity, bool FP420Transport,bool ZDCTransport) : 
+   m_verbosity(verbosity), 
+@@ -239,7 +239,7 @@ void Hector::filterFP420(TRandom3* rootEngine){
+   float x1_420;
+   float y1_420;
+   
+-  if ( !m_beamPart.empty() && lengthfp420>0. ) {
++  if ( m_beamPart.size() && lengthfp420>0. ) {
+     
+     for (it = m_beamPart.begin(); it != m_beamPart.end(); ++it ) {
+       line = (*it).first;
+@@ -268,12 +268,12 @@ void Hector::filterFP420(TRandom3* rootEngine){
+             part->smearE(SBE,rootEngine);  // in GeV, default is SBE=0.79
+           }
+         }
+-        if ( direction == 1 && m_beamlineFP4201 != nullptr ) {
++        if ( direction == 1 && m_beamlineFP4201 != 0 ) {
+           part->computePath( m_beamlineFP4201 );
+           is_stop = part->stopped( m_beamlineFP4201 );
+           if(m_verbosity) LogDebug("HectorEventProcessing") << "Hector:filterFP420: barcode = " << line << " positive is_stop=  "<< is_stop;
+         }
+-        else if ( direction == -1 && m_beamlineFP4202 != nullptr ){
++        else if ( direction == -1 && m_beamlineFP4202 != 0 ){
+           part->computePath( m_beamlineFP4202 );
+           is_stop = part->stopped( m_beamlineFP4202 );
+           if(m_verbosity) LogDebug("HectorEventProcessing") << "Hector:filterFP420: barcode = " << line << " negative is_stop=  "<< is_stop;
+@@ -320,7 +320,7 @@ void Hector::filterZDC(TRandom3* rootEngine){
+   bool is_stop_zdc = false;
+   int direction;
+   
+-  if ( !m_beamPart.empty() && lengthzdc>0. ) {
++  if ( m_beamPart.size() && lengthzdc>0. ) {
+     
+     for (it = m_beamPart.begin(); it != m_beamPart.end(); ++it ) {
+       line = (*it).first;
+@@ -352,12 +352,12 @@ void Hector::filterZDC(TRandom3* rootEngine){
+             part->smearE(SBE,rootEngine);  // in GeV, default is SBE=0.79
+           }
+         }
+-        if ( direction == 1 && m_beamlineZDC1 != nullptr ){
++        if ( direction == 1 && m_beamlineZDC1 != 0 ){
+           part->computePath( m_beamlineZDC1 );
+           is_stop_zdc = part->stopped( m_beamlineZDC1 );
+           m_isStoppedzdc[line] = is_stop_zdc;
+           if(m_verbosity) LogDebug("HectorEventProcessing") << "Hector:filterZDC: barcode " << line << " positive is_stop_zdc=  "<< is_stop_zdc;
+-        } else if ( direction == -1 && m_beamlineZDC2 != nullptr ){
++        } else if ( direction == -1 && m_beamlineZDC2 != 0 ){
+           part->computePath( m_beamlineZDC2 );
+           is_stop_zdc = part->stopped( m_beamlineZDC2 );
+           m_isStoppedzdc[line] = is_stop_zdc;
+@@ -394,7 +394,7 @@ void Hector::filterD1(TRandom3* rootEngine){
+   float x1_d1;
+   float y1_d1;
+   
+-  if ( !m_beamPart.empty() && lengthd1>0.) {
++  if ( m_beamPart.size() && lengthd1>0.) {
+     
+     for (it = m_beamPart.begin(); it != m_beamPart.end(); ++it ) {
+       line = (*it).first;
+@@ -422,12 +422,12 @@ void Hector::filterD1(TRandom3* rootEngine){
+             part->smearE(SBE,rootEngine);  // in GeV, default is SBE=0.79
+           }
+         }
+-        if ( direction == 1 && m_beamlineD11 != nullptr ) {
++        if ( direction == 1 && m_beamlineD11 != 0 ) {
+           part->computePath( m_beamlineD11 );
+           is_stop_d1 = part->stopped( m_beamlineD11 );
+           m_isStoppedd1[line] = is_stop_d1;
+           if(m_verbosity) LogDebug("HectorEventProcessing") << "Hector:filterD1 barcode " << line << " positive is_stop_d1 =  "<< is_stop_d1;
+-        } else  if ( direction == -1 && m_beamlineD12 != nullptr ){
++        } else  if ( direction == -1 && m_beamlineD12 != 0 ){
+           part->computePath( m_beamlineD12 );
+           is_stop_d1 = part->stopped( m_beamlineD12 );
+           m_isStoppedd1[line] = is_stop_d1;
